@@ -4,6 +4,7 @@ import hashlib
 import json
 import urllib.parse
 import logging
+import httpx
 from datetime import datetime
 from typing import Optional
 
@@ -17,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 ADMIN_CHAT_ID = 941957416
-DEV_MODE = not TELEGRAM_BOT_TOKEN  # Если токен не задан — режим разработки
+DEV_MODE = not TELEGRAM_BOT_TOKEN
 
 SERVICES = {
     "manicure": {"name": "💅 Маникюр", "price": "Бесплатно", "duration": 60},
@@ -29,12 +30,29 @@ AVAILABLE_TIMES = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"
 
 SALON_INFO = {
     "name": "Салон красоты Sахар 💖",
-    "address": "г. Махачкала",
+    "address": "г. Махачкала, ул. Ваххабитова 2к3",
     "phone": "+89681234567",
     "admin": "@coachgnv",
 }
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+
+
+# ===== ОТПРАВКА СООБЩЕНИЙ В TELEGRAM =====
+
+async def send_telegram_message(chat_id: int, text: str):
+    if not TELEGRAM_BOT_TOKEN:
+        logging.warning("Токен не задан — уведомление не отправлено")
+        return
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                json={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                timeout=10,
+            )
+    except Exception as e:
+        logging.error(f"Ошибка отправки уведомления: {e}")
 
 
 def verify_init_data(init_data: str) -> Optional[dict]:
@@ -112,7 +130,7 @@ class BookingCreate(BaseModel):
 
 
 @app.post("/api/bookings")
-def api_create_booking(
+async def api_create_booking(
     body: BookingCreate,
     x_telegram_init_data: Optional[str] = Header(None),
 ):
@@ -125,6 +143,32 @@ def api_create_booking(
         body.service, body.date, body.time,
         body.client_name, body.phone, user.get("id"),
     )
+    service = SERVICES[body.service]
+
+    # Уведомление клиенту
+    client_chat_id = user.get("id")
+    if client_chat_id:
+        await send_telegram_message(
+            client_chat_id,
+            f"🎉 *Запись подтверждена!*\n\n"
+            f"{service['name']} — *{service['price']}*\n"
+            f"📅 Дата: *{body.date}* в *{body.time}*\n"
+            f"👤 Имя: *{body.client_name}*\n"
+            f"📱 Телефон: *{body.phone}*\n\n"
+            f"📍 Ждём вас по адресу:\n{SALON_INFO['address']}\n\n"
+            f"Если нужно перенести — напишите нам: {SALON_INFO['admin']} 💖"
+        )
+
+    # Уведомление администратору
+    await send_telegram_message(
+        ADMIN_CHAT_ID,
+        f"🔔 *Новая запись через Mini App!*\n\n"
+        f"{service['name']} — *{service['price']}*\n"
+        f"📅 Дата: *{body.date}* в *{body.time}*\n"
+        f"👤 Клиент: *{body.client_name}*\n"
+        f"📱 Телефон: *{body.phone}*"
+    )
+
     return {"id": booking_id, "status": "confirmed"}
 
 
@@ -148,7 +192,7 @@ def api_my_bookings(x_telegram_init_data: Optional[str] = Header(None)):
 
 
 @app.delete("/api/my-bookings/{booking_id}")
-def api_cancel_my_booking(
+async def api_cancel_my_booking(
     booking_id: int,
     x_telegram_init_data: Optional[str] = Header(None),
 ):
@@ -156,7 +200,30 @@ def api_cancel_my_booking(
     existing = db.get_booking(booking_id)
     if not existing or existing.get("chat_id") != user.get("id"):
         raise HTTPException(status_code=404, detail="Запись не найдена")
+
+    service = SERVICES.get(existing["service"], {})
     db.delete_booking(booking_id)
+
+    # Уведомление клиенту об отмене
+    client_chat_id = user.get("id")
+    if client_chat_id:
+        await send_telegram_message(
+            client_chat_id,
+            f"❌ *Ваша запись отменена*\n\n"
+            f"{service.get('name', '')} \n"
+            f"📅 {existing['date']} в {existing['time']}\n\n"
+            f"Если хотите записаться снова — мы всегда рады! 💖"
+        )
+
+    # Уведомление администратору об отмене
+    await send_telegram_message(
+        ADMIN_CHAT_ID,
+        f"🚫 *Клиент отменил запись (Mini App)*\n\n"
+        f"{service.get('name', '')}\n"
+        f"📅 {existing['date']} в {existing['time']}\n"
+        f"👤 {existing['client_name']} · 📱 {existing['phone']}"
+    )
+
     return {"status": "cancelled"}
 
 
@@ -175,14 +242,38 @@ def api_admin_bookings(x_telegram_init_data: Optional[str] = Header(None)):
 
 
 @app.delete("/api/admin/bookings/{booking_id}")
-def api_admin_cancel_booking(
+async def api_admin_cancel_booking(
     booking_id: int,
     x_telegram_init_data: Optional[str] = Header(None),
 ):
     require_admin(x_telegram_init_data)
-    deleted = db.delete_booking(booking_id)
-    if not deleted:
+    existing = db.get_booking(booking_id)
+    if not existing:
         raise HTTPException(status_code=404, detail="Запись не найдена")
+
+    service = SERVICES.get(existing["service"], {})
+    db.delete_booking(booking_id)
+
+    # Уведомление клиенту что запись отменена администратором
+    client_chat_id = existing.get("chat_id")
+    if client_chat_id:
+        await send_telegram_message(
+            client_chat_id,
+            f"❌ *Ваша запись была отменена администратором*\n\n"
+            f"{service.get('name', '')}\n"
+            f"📅 {existing['date']} в {existing['time']}\n\n"
+            f"Для уточнения деталей свяжитесь с нами: {SALON_INFO['admin']} 💖"
+        )
+
+    # Уведомление администратору
+    await send_telegram_message(
+        ADMIN_CHAT_ID,
+        f"🚫 *Запись отменена администратором*\n\n"
+        f"{service.get('name', '')}\n"
+        f"📅 {existing['date']} в {existing['time']}\n"
+        f"👤 {existing['client_name']} · 📱 {existing['phone']}"
+    )
+
     return {"status": "cancelled"}
 
 
