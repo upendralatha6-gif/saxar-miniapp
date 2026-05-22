@@ -150,9 +150,7 @@ SERVICES = {
     "muz_lazer_podm": {"name": "⚡ Лазер (муж): Подмышки", "price": "800–1000 руб", "duration": 20, "category": "👨 Мужской прайс"},
     "muz_lazer_nogi": {"name": "⚡ Лазер (муж): Ноги полностью", "price": "4000–4400 руб", "duration": 90, "category": "👨 Мужской прайс"},
 },
-    "pedicure": {"name": "🦶 Педикюр", "price": "50 000 руб", "duration": 90},
-    "eyebrows": {"name": "🤨 Брови", "price": "500 000 руб", "duration": 45},
-}
+    
 
 AVAILABLE_TIMES = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
 
