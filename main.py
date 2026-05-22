@@ -21,7 +21,135 @@ ADMIN_CHAT_ID = 941957416
 DEV_MODE = not TELEGRAM_BOT_TOKEN
 
 SERVICES = {
-    "manicure": {"name": "💅 Маникюр", "price": "Бесплатно", "duration": 60},
+    # ===== ЖЕНСКИЙ ПРАЙС =====
+
+    # 🪒 ДЕПИЛЯЦИЯ ДОПОЛНИТЕЛЬНО
+    "dep_pudra": {"name": "🪒 Пудра энзимная", "price": "60 руб", "duration": 10, "category": "💆 Депиляция (доп.)"},
+    "dep_maska": {"name": "🪒 Противовоспалительная маска", "price": "60 руб", "duration": 10, "category": "💆 Депиляция (доп.)"},
+    "dep_gel": {"name": "🪒 Обезболивающий гель", "price": "650 руб", "duration": 10, "category": "💆 Депиляция (доп.)"},
+
+    # 🪒 ВОСКОВАЯ ДЕПИЛЯЦИЯ
+    "vosk_telo": {"name": "🪒 Воск: Всё тело", "price": "1800–2100 руб", "duration": 90, "category": "🪒 Восковая депиляция"},
+    "vosk_podm": {"name": "🪒 Воск: Подмышки", "price": "250–300 руб", "duration": 20, "category": "🪒 Восковая депиляция"},
+    "vosk_bikini_tr": {"name": "🪒 Воск: Бикини трусики", "price": "350–400 руб", "duration": 20, "category": "🪒 Восковая депиляция"},
+    "vosk_bikini_gl": {"name": "🪒 Воск: Бикини глубокое", "price": "550–700 руб", "duration": 30, "category": "🪒 Восковая депиляция"},
+    "vosk_nogi_do": {"name": "🪒 Воск: Ноги до колен", "price": "500–550 руб", "duration": 30, "category": "🪒 Восковая депиляция"},
+    "vosk_nogi_vyshe": {"name": "🪒 Воск: Ноги выше колен", "price": "500–550 руб", "duration": 30, "category": "🪒 Восковая депиляция"},
+    "vosk_nogi_pol": {"name": "🪒 Воск: Ноги полностью", "price": "1000–1100 руб", "duration": 60, "category": "🪒 Восковая депиляция"},
+    "vosk_ruki_do": {"name": "🪒 Воск: Руки до локтя", "price": "300–350 руб", "duration": 20, "category": "🪒 Восковая депиляция"},
+    "vosk_ruki_pol": {"name": "🪒 Воск: Руки полностью", "price": "600–700 руб", "duration": 40, "category": "🪒 Восковая депиляция"},
+
+    # 🪒 ПОЛИМЕРНЫЙ ВОСК
+    "polvosk_telo": {"name": "🪒 Пол.воск: Всё тело", "price": "3250–3900 руб", "duration": 120, "category": "🪒 Полимерный воск"},
+    "polvosk_lico": {"name": "🪒 Пол.воск: Область лица", "price": "200–250 руб", "duration": 15, "category": "🪒 Полимерный воск"},
+    "polvosk_podm": {"name": "🪒 Пол.воск: Подмышки", "price": "350–400 руб", "duration": 20, "category": "🪒 Полимерный воск"},
+    "polvosk_bikini_tr": {"name": "🪒 Пол.воск: Бикини трусики", "price": "500–600 руб", "duration": 25, "category": "🪒 Полимерный воск"},
+    "polvosk_bikini_gl": {"name": "🪒 Пол.воск: Бикини глубокое", "price": "1100–1300 руб", "duration": 40, "category": "🪒 Полимерный воск"},
+    "polvosk_nogi_pol": {"name": "🪒 Пол.воск: Ноги полностью", "price": "1800–2200 руб", "duration": 60, "category": "🪒 Полимерный воск"},
+
+    # 🍬 ШУГАРИНГ
+    "sugar_telo": {"name": "🍬 Шугаринг: Всё тело", "price": "2100–2550 руб", "duration": 120, "category": "🍬 Шугаринг"},
+    "sugar_lico": {"name": "🍬 Шугаринг: Область лица", "price": "200–250 руб", "duration": 15, "category": "🍬 Шугаринг"},
+    "sugar_podm": {"name": "🍬 Шугаринг: Подмышки", "price": "250–300 руб", "duration": 20, "category": "🍬 Шугаринг"},
+    "sugar_bikini_tr": {"name": "🍬 Шугаринг: Бикини трусики", "price": "300–400 руб", "duration": 25, "category": "🍬 Шугаринг"},
+    "sugar_bikini_gl": {"name": "🍬 Шугаринг: Бикини глубокое", "price": "850–950 руб", "duration": 40, "category": "🍬 Шугаринг"},
+    "sugar_nogi_do": {"name": "🍬 Шугаринг: Ноги до колен", "price": "500–650 руб", "duration": 30, "category": "🍬 Шугаринг"},
+    "sugar_nogi_pol": {"name": "🍬 Шугаринг: Ноги полностью", "price": "1000–1300 руб", "duration": 60, "category": "🍬 Шугаринг"},
+
+    # 💧 AQUA ШУГАРИНГ
+    "aqua_podm": {"name": "💧 Aqua шугаринг: Подмышки", "price": "350–400 руб", "duration": 20, "category": "💧 Aqua шугаринг"},
+    "aqua_bikini_tr": {"name": "💧 Aqua шугаринг: Бикини трусики", "price": "600–700 руб", "duration": 25, "category": "💧 Aqua шугаринг"},
+    "aqua_bikini_gl": {"name": "💧 Aqua шугаринг: Бикини глубокое", "price": "900–1250 руб", "duration": 40, "category": "💧 Aqua шугаринг"},
+    "aqua_nogi_pol": {"name": "💧 Aqua шугаринг: Ноги полностью", "price": "1200–1400 руб", "duration": 60, "category": "💧 Aqua шугаринг"},
+
+    # ⚡ ЛАЗЕРНАЯ ЭПИЛЯЦИЯ
+    "lazer_podm_bikini": {"name": "⚡ Лазер: Подмышки + бикини глубокое", "price": "1700–2000 руб", "duration": 60, "category": "⚡ Лазерная эпиляция"},
+    "lazer_telo": {"name": "⚡ Лазер: Подмышки + бикини + ноги полностью", "price": "5300–6000 руб", "duration": 120, "category": "⚡ Лазерная эпиляция"},
+    "lazer_podm": {"name": "⚡ Лазер: Подмышки", "price": "500–600 руб", "duration": 20, "category": "⚡ Лазерная эпиляция"},
+    "lazer_bikini_gl": {"name": "⚡ Лазер: Бикини глубокое", "price": "1200–1400 руб", "duration": 40, "category": "⚡ Лазерная эпиляция"},
+    "lazer_nogi_pol": {"name": "⚡ Лазер: Ноги полностью", "price": "3600–4000 руб", "duration": 90, "category": "⚡ Лазерная эпиляция"},
+
+    # 💅 МАНИКЮР
+    "man_klass": {"name": "💅 Маникюр классический", "price": "700–800 руб", "duration": 60, "category": "💅 Маникюр"},
+    "man_kombi": {"name": "💅 Маникюр комбинированный", "price": "800–900 руб", "duration": 60, "category": "💅 Маникюр"},
+    "man_apparat": {"name": "💅 Маникюр аппаратный", "price": "850–950 руб", "duration": 60, "category": "💅 Маникюр"},
+    "man_detsky": {"name": "💅 Маникюр детский (до 7 лет)", "price": "300–400 руб", "duration": 30, "category": "💅 Маникюр"},
+    "man_yapon": {"name": "💅 Маникюр японский", "price": "1200–1400 руб", "duration": 75, "category": "💅 Маникюр"},
+    "man_parafin": {"name": "💅 Парафинотерапия рук", "price": "400 руб", "duration": 20, "category": "💅 Маникюр"},
+
+    # 💅 ПОКРЫТИЕ
+    "pokr_lak": {"name": "💅 Покрытие лаком", "price": "300 руб", "duration": 20, "category": "💅 Покрытие"},
+    "pokr_gel": {"name": "💅 Гель-лак", "price": "700–850 руб", "duration": 30, "category": "💅 Покрытие"},
+    "pokr_gel_luxio": {"name": "💅 Гель-лак LUXIO", "price": "950–1050 руб", "duration": 30, "category": "💅 Покрытие"},
+    "pokr_snyatie": {"name": "💅 Снятие гель-лака", "price": "400 руб", "duration": 20, "category": "💅 Покрытие"},
+
+    # 💅 НАРАЩИВАНИЕ НОГТЕЙ
+    "nar_ukrp": {"name": "💅 Укрепление гелем под гель-лак", "price": "500–600 руб", "duration": 40, "category": "💅 Наращивание"},
+    "nar_noghi": {"name": "💅 Наращивание ногтей (любой дизайн)", "price": "2100–2250 руб", "duration": 120, "category": "💅 Наращивание"},
+    "nar_snyatie": {"name": "💅 Снятие нарощенных ногтей", "price": "600 руб", "duration": 30, "category": "💅 Наращивание"},
+
+    # 🦶 ПЕДИКЮР
+    "ped_klass": {"name": "🦶 Педикюр классический", "price": "900–1000 руб", "duration": 60, "category": "🦶 Педикюр"},
+    "ped_kombi": {"name": "🦶 Педикюр комбинированный", "price": "1000–1100 руб", "duration": 60, "category": "🦶 Педикюр"},
+    "ped_apparat": {"name": "🦶 Педикюр аппаратный", "price": "1100–1200 руб", "duration": 60, "category": "🦶 Педикюр"},
+    "ped_smart": {"name": "🦶 SMART-педикюр", "price": "1900–2300 руб", "duration": 90, "category": "🦶 Педикюр"},
+    "ped_golden": {"name": "🦶 Педикюр Golden Trace", "price": "1800–2200 руб", "duration": 90, "category": "🦶 Педикюр"},
+
+    # 👁 БРОВИ
+    "brov_oform": {"name": "👁 Оформление бровей (пинцет/воск)", "price": "400–500 руб", "duration": 30, "category": "👁 Брови"},
+    "brov_oform_kraska": {"name": "👁 Брови оформление + окрашивание краской", "price": "800–1000 руб", "duration": 45, "category": "👁 Брови"},
+    "brov_oform_hna": {"name": "👁 Брови оформление + окрашивание хной", "price": "900–1100 руб", "duration": 45, "category": "👁 Брови"},
+    "brov_lamin_sigma": {"name": "👁 Ламинирование бровей SIGMA", "price": "1400–1600 руб", "duration": 60, "category": "👁 Брови"},
+    "brov_lamin_lami": {"name": "👁 Ламинирование бровей LAMI SMART", "price": "1800–2000 руб", "duration": 60, "category": "👁 Брови"},
+    "brov_velvet": {"name": "👁 Вельвет бровей", "price": "2600–3000 руб", "duration": 75, "category": "👁 Брови"},
+
+    # 👁 РЕСНИЦЫ
+    "res_okrash": {"name": "👁 Окрашивание ресниц", "price": "300–400 руб", "duration": 20, "category": "👁 Ресницы"},
+    "res_lamin_sigma": {"name": "👁 Ламинирование ресниц SIGMA", "price": "1700–1900 руб", "duration": 60, "category": "👁 Ресницы"},
+    "res_lamin_lami": {"name": "👁 Ламинирование ресниц LAMI SMART", "price": "2000–2200 руб", "duration": 60, "category": "👁 Ресницы"},
+    "res_nar_1d": {"name": "👁 Наращивание ресниц 1D", "price": "1500–1700 руб", "duration": 90, "category": "👁 Ресницы"},
+    "res_nar_2d": {"name": "👁 Наращивание ресниц 2D", "price": "2100–2300 руб", "duration": 100, "category": "👁 Ресницы"},
+    "res_nar_3d": {"name": "👁 Наращивание ресниц 3D", "price": "2300–2500 руб", "duration": 110, "category": "👁 Ресницы"},
+    "res_snyatie": {"name": "👁 Снятие ресниц", "price": "350 руб", "duration": 20, "category": "👁 Ресницы"},
+
+    # 💄 МАКИЯЖ
+    "mak_express": {"name": "💄 Макияж «Экспресс»", "price": "1350–1450 руб", "duration": 45, "category": "💄 Макияж"},
+    "mak_dnevnoy": {"name": "💄 Дневной макияж", "price": "1700–1800 руб", "duration": 60, "category": "💄 Макияж"},
+    "mak_vecherny": {"name": "💄 Вечерний макияж", "price": "2300–2400 руб", "duration": 75, "category": "💄 Макияж"},
+    "mak_slozhny": {"name": "💄 Сложный макияж", "price": "2550–2650 руб", "duration": 90, "category": "💄 Макияж"},
+    "obraz_dnevnoy": {"name": "💄 Дневной образ", "price": "4200–4300 руб", "duration": 120, "category": "💄 Образ"},
+    "obraz_vecherny": {"name": "💄 Вечерний образ", "price": "4800–4900 руб", "duration": 150, "category": "💄 Образ"},
+    "obraz_prazdnik": {"name": "💄 Праздничный образ", "price": "5500–5600 руб", "duration": 180, "category": "💄 Образ"},
+
+    # ✂️ ПАРИКМАХЕР
+    "hair_striz_zhen": {"name": "✂️ Стрижка женская", "price": "1500–2000 руб", "duration": 60, "category": "✂️ Парикмахер"},
+    "hair_striz_det": {"name": "✂️ Стрижка детская (до 7 лет)", "price": "700–1000 руб", "duration": 30, "category": "✂️ Парикмахер"},
+    "hair_ukladka": {"name": "✂️ Укладка лёгкая", "price": "1000–1500 руб", "duration": 45, "category": "✂️ Парикмахер"},
+    "hair_pricheska": {"name": "✂️ Причёска вечерняя", "price": "2000–4200 руб", "duration": 90, "category": "✂️ Парикмахер"},
+    "hair_lokony": {"name": "✂️ Голливудские локоны", "price": "1800–2150 руб", "duration": 60, "category": "✂️ Парикмахер"},
+
+    # 💆 ЛЕЧЕНИЕ ВОЛОС
+    "vol_lebel_abs": {"name": "💆 Абсолютное счастье LEBEL (короткие)", "price": "3600–4000 руб", "duration": 60, "category": "💆 Лечение волос"},
+    "vol_nanoplastika": {"name": "💆 Нанопластика (короткие)", "price": "3500–3900 руб", "duration": 90, "category": "💆 Лечение волос"},
+    "vol_keratin": {"name": "💆 Кератиновое выпрямление (короткие)", "price": "3300–4500 руб", "duration": 120, "category": "💆 Лечение волос"},
+    "vol_botox": {"name": "💆 Ботокс волос Honma Tokio (короткие)", "price": "3400–3900 руб", "duration": 90, "category": "💆 Лечение волос"},
+
+    # 🎨 ОКРАШИВАНИЕ
+    "okr_1ton": {"name": "🎨 Окрашивание в 1 тон (короткие)", "price": "3150–3800 руб", "duration": 90, "category": "🎨 Окрашивание"},
+    "okr_slozh": {"name": "🎨 Сложное окрашивание (короткие)", "price": "4700–5450 руб", "duration": 120, "category": "🎨 Окрашивание"},
+    "okr_airtouch": {"name": "🎨 Airtouch (короткие)", "price": "5800–7500 руб", "duration": 150, "category": "🎨 Окрашивание"},
+    "okr_melir": {"name": "🎨 Мелирование (короткие)", "price": "2950–4300 руб", "duration": 90, "category": "🎨 Окрашивание"},
+
+    # ===== МУЖСКОЙ ПРАЙС =====
+    "muz_striz": {"name": "✂️ Стрижка мужская", "price": "1000–1300 руб", "duration": 45, "category": "👨 Мужской прайс"},
+    "muz_striz_feyd": {"name": "✂️ Стрижка мужская + фейд", "price": "1300–1600 руб", "duration": 60, "category": "👨 Мужской прайс"},
+    "muz_boroda": {"name": "✂️ Борода", "price": "500–700 руб", "duration": 30, "category": "👨 Мужской прайс"},
+    "muz_brov": {"name": "👁 Оформление бровей (мужской)", "price": "450–550 руб", "duration": 20, "category": "👨 Мужской прайс"},
+    "muz_manik": {"name": "💅 Маникюр мужской", "price": "1000–1100 руб", "duration": 45, "category": "👨 Мужской прайс"},
+    "muz_pedik": {"name": "🦶 Педикюр мужской", "price": "1650–1800 руб", "duration": 60, "category": "👨 Мужской прайс"},
+    "muz_lazer_podm": {"name": "⚡ Лазер (муж): Подмышки", "price": "800–1000 руб", "duration": 20, "category": "👨 Мужской прайс"},
+    "muz_lazer_nogi": {"name": "⚡ Лазер (муж): Ноги полностью", "price": "4000–4400 руб", "duration": 90, "category": "👨 Мужской прайс"},
+},
     "pedicure": {"name": "🦶 Педикюр", "price": "50 000 руб", "duration": 90},
     "eyebrows": {"name": "🤨 Брови", "price": "500 000 руб", "duration": 45},
 }
