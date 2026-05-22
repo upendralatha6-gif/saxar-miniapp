@@ -97,8 +97,8 @@ SERVICES = {
 
     # 👁 БРОВИ
     "brov_oform": {"name": "👁 Оформление бровей (пинцет/воск)", "price": "400–500 руб", "duration": 30, "category": "👁 Брови"},
-    "brov_oform_kraska": {"name": "👁 Брови оформление + окрашивание краской", "price": "800–1000 руб", "duration": 45, "category": "👁 Брови"},
-    "brov_oform_hna": {"name": "👁 Брови оформление + окрашивание хной", "price": "900–1100 руб", "duration": 45, "category": "👁 Брови"},
+    "brov_oform_kraska": {"name": "👁 Брови оформление + краска", "price": "800–1000 руб", "duration": 45, "category": "👁 Брови"},
+    "brov_oform_hna": {"name": "👁 Брови оформление + хна", "price": "900–1100 руб", "duration": 45, "category": "👁 Брови"},
     "brov_lamin_sigma": {"name": "👁 Ламинирование бровей SIGMA", "price": "1400–1600 руб", "duration": 60, "category": "👁 Брови"},
     "brov_lamin_lami": {"name": "👁 Ламинирование бровей LAMI SMART", "price": "1800–2000 руб", "duration": 60, "category": "👁 Брови"},
     "brov_velvet": {"name": "👁 Вельвет бровей", "price": "2600–3000 руб", "duration": 75, "category": "👁 Брови"},
@@ -113,7 +113,7 @@ SERVICES = {
     "res_snyatie": {"name": "👁 Снятие ресниц", "price": "350 руб", "duration": 20, "category": "👁 Ресницы"},
 
     # 💄 МАКИЯЖ
-    "mak_express": {"name": "💄 Макияж «Экспресс»", "price": "1350–1450 руб", "duration": 45, "category": "💄 Макияж"},
+    "mak_express": {"name": "💄 Макияж Экспресс", "price": "1350–1450 руб", "duration": 45, "category": "💄 Макияж"},
     "mak_dnevnoy": {"name": "💄 Дневной макияж", "price": "1700–1800 руб", "duration": 60, "category": "💄 Макияж"},
     "mak_vecherny": {"name": "💄 Вечерний макияж", "price": "2300–2400 руб", "duration": 75, "category": "💄 Макияж"},
     "mak_slozhny": {"name": "💄 Сложный макияж", "price": "2550–2650 руб", "duration": 90, "category": "💄 Макияж"},
@@ -149,13 +149,12 @@ SERVICES = {
     "muz_pedik": {"name": "🦶 Педикюр мужской", "price": "1650–1800 руб", "duration": 60, "category": "👨 Мужской прайс"},
     "muz_lazer_podm": {"name": "⚡ Лазер (муж): Подмышки", "price": "800–1000 руб", "duration": 20, "category": "👨 Мужской прайс"},
     "muz_lazer_nogi": {"name": "⚡ Лазер (муж): Ноги полностью", "price": "4000–4400 руб", "duration": 90, "category": "👨 Мужской прайс"},
-},
-    
+}
 
 AVAILABLE_TIMES = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
 
 SALON_INFO = {
-    "name": "Салон красоты Sахар 💖",
+    "name": "Салон красоты Sахар",
     "address": "г. Махачкала, ул. Ваххабитова 2к3",
     "phone": "+89681234567",
     "admin": "@coachgnv",
@@ -330,18 +329,18 @@ async def api_cancel_my_booking(
     service = SERVICES.get(existing["service"], {})
     db.delete_booking(booking_id)
 
-    # Уведомление клиенту об отмене
+    # Уведомление клиенту
     client_chat_id = user.get("id")
     if client_chat_id:
         await send_telegram_message(
             client_chat_id,
             f"❌ *Ваша запись отменена*\n\n"
-            f"{service.get('name', '')} \n"
+            f"{service.get('name', '')}\n"
             f"📅 {existing['date']} в {existing['time']}\n\n"
             f"Если хотите записаться снова — мы всегда рады! 💖"
         )
 
-    # Уведомление администратору об отмене
+    # Уведомление администратору
     await send_telegram_message(
         ADMIN_CHAT_ID,
         f"🚫 *Клиент отменил запись (Mini App)*\n\n"
@@ -380,15 +379,15 @@ async def api_admin_cancel_booking(
     service = SERVICES.get(existing["service"], {})
     db.delete_booking(booking_id)
 
-    # Уведомление клиенту что запись отменена администратором
+    # Уведомление клиенту
     client_chat_id = existing.get("chat_id")
     if client_chat_id:
         await send_telegram_message(
             client_chat_id,
-            f"❌ *Ваша запись была отменена администратором*\n\n"
+            f"❌ *Ваша запись отменена администратором*\n\n"
             f"{service.get('name', '')}\n"
             f"📅 {existing['date']} в {existing['time']}\n\n"
-            f"Для уточнения деталей свяжитесь с нами: {SALON_INFO['admin']} 💖"
+            f"Для уточнения деталей: {SALON_INFO['admin']} 💖"
         )
 
     # Уведомление администратору
