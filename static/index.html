@@ -16,19 +16,11 @@
     <div class="hero">
       <div class="hero-logo">💖</div>
       <h1 class="hero-title">Салон красоты Sахар</h1>
-      <p class="hero-subtitle">г. Махачкала</p>
-    </div>
-
-    <div class="promo-card">
-      <div class="promo-icon">🎁</div>
-      <div>
-        <div class="promo-badge">Акция</div>
-        <div class="promo-text">💅 Маникюр — БЕСПЛАТНО</div>
-      </div>
+      <p class="hero-subtitle">г. Махачкала, ул. Ваххабитова 2к3</p>
     </div>
 
     <div class="info-list">
-      <div class="info-row"><span class="info-icon">📍</span><div><div class="info-lbl">Адрес</div><div class="info-val">г. Махачкала</div></div></div>
+      <div class="info-row"><span class="info-icon">📍</span><div><div class="info-lbl">Адрес</div><div class="info-val">г. Махачкала, ул. Ваххабитова 2к3</div></div></div>
       <div class="info-row"><span class="info-icon">📞</span><div><div class="info-lbl">Телефон</div><div class="info-val">+89681234567</div></div></div>
       <div class="info-row"><span class="info-icon">💬</span><div><div class="info-lbl">Telegram</div><div class="info-val">@coachgnv</div></div></div>
     </div>
@@ -45,46 +37,79 @@
   <!-- ══ ЗАПИСЬ ══ -->
   <section id="page-book" class="page">
 
-    <div id="step-service" class="step active">
-      <div class="page-header"><h2>📅 Запись</h2><p class="hint">Шаг 1 из 5 — выбери услугу</p></div>
+    <!-- Шаг 0 — пол -->
+    <div id="step-gender" class="step active">
+      <div class="page-header">
+        <h2>📅 Запись</h2>
+        <p class="hint">Шаг 1 из 7 — выбери раздел</p>
+      </div>
+      <div id="book-gender-list"></div>
+    </div>
+
+    <!-- Шаг 1 — категория -->
+    <div id="step-category" class="step">
+      <div class="page-header">
+        <button class="back-btn" onclick="goStep('gender')">← Назад</button>
+        <h2>📋 Категория</h2>
+        <p class="hint">Шаг 2 из 7 — выбери категорию</p>
+      </div>
+      <div id="book-category-list"></div>
+    </div>
+
+    <!-- Шаг 2 — услуга -->
+    <div id="step-service" class="step">
+      <div class="page-header">
+        <button class="back-btn" onclick="goStep('category')">← Назад</button>
+        <h2>💅 Услуга</h2>
+        <p class="hint">Шаг 3 из 7 — выбери услугу</p>
+      </div>
       <div id="book-service-list"></div>
     </div>
 
+    <!-- Шаг 3 — дата -->
     <div id="step-date" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('service')">← Назад</button>
-        <h2>📅 Выбери дату</h2><p class="hint">Шаг 2 из 5</p>
+        <h2>📅 Выбери дату</h2>
+        <p class="hint">Шаг 4 из 7</p>
       </div>
       <div id="dates-list"></div>
     </div>
 
+    <!-- Шаг 4 — время -->
     <div id="step-time" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('date')">← Назад</button>
-        <h2>⏰ Выбери время</h2><p class="hint">Шаг 3 из 5</p>
+        <h2>⏰ Выбери время</h2>
+        <p class="hint">Шаг 5 из 7</p>
       </div>
       <div class="legend"><span>✅ свободно</span><span>❌ занято</span></div>
       <div id="times-grid" class="times-grid"></div>
     </div>
 
+    <!-- Шаг 5 — имя -->
     <div id="step-name" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('time')">← Назад</button>
-        <h2>👤 Ваше имя</h2><p class="hint">Шаг 4 из 5</p>
+        <h2>👤 Ваше имя</h2>
+        <p class="hint">Шаг 6 из 7</p>
       </div>
       <input id="inp-name" class="form-input" type="text" placeholder="Введите имя">
       <button class="btn-primary mt-12" onclick="submitName()">Далее →</button>
     </div>
 
+    <!-- Шаг 6 — телефон -->
     <div id="step-phone" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('name')">← Назад</button>
-        <h2>📱 Номер телефона</h2><p class="hint">Шаг 5 из 5</p>
+        <h2>📱 Номер телефона</h2>
+        <p class="hint">Шаг 7 из 7</p>
       </div>
       <input id="inp-phone" class="form-input" type="tel" placeholder="+7 (999) 123-45-67">
       <button class="btn-primary mt-12" onclick="submitPhone()">Проверить запись →</button>
     </div>
 
+    <!-- Шаг 7 — подтверждение -->
     <div id="step-confirm" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('phone')">← Назад</button>
@@ -95,6 +120,7 @@
       <button class="btn-secondary mt-8" onclick="nav('home')">Отмена</button>
     </div>
 
+    <!-- Успех -->
     <div id="step-success" class="step">
       <div class="success-wrap">
         <div class="success-emoji">🎉</div>
@@ -115,33 +141,28 @@
   <!-- ══ АДМИНИСТРАТОР ══ -->
   <section id="page-admin" class="page">
     <div class="page-header"><h2>👤 Администратор</h2></div>
-
     <div class="tab-bar">
       <button class="tab active" onclick="showTab('bookings')">Записи</button>
       <button class="tab" onclick="showTab('stats')">Статистика</button>
       <button class="tab" onclick="showTab('reviews')">Отзывы</button>
     </div>
-
     <div id="tab-bookings" class="tab-panel active"><div id="admin-bookings"></div></div>
     <div id="tab-stats"    class="tab-panel"><div id="admin-stats"></div></div>
     <div id="tab-reviews"  class="tab-panel"><div id="admin-reviews"></div></div>
   </section>
 
-</div><!-- /#app -->
+</div>
 
 <!-- ══ НИЖНЯЯ НАВИГАЦИЯ ══ -->
 <nav class="bottom-nav">
-  <button class="nav-btn active" data-page="home"       onclick="nav('home')">       <span class="ni">🏠</span><span class="nl">Главная</span>   </button>
-  <button class="nav-btn"        data-page="services"   onclick="nav('services')">   <span class="ni">💅</span><span class="nl">Услуги</span>    </button>
-  <button class="nav-btn nav-cta" data-page="book"      onclick="nav('book')">       <span class="ni">📅</span><span class="nl">Записаться</span></button>
-  <button class="nav-btn"        data-page="mybookings" onclick="nav('mybookings')"> <span class="ni">🗓</span><span class="nl">Мои записи</span></button>
-  <button class="nav-btn nav-admin hidden" data-page="admin" onclick="nav('admin')"> <span class="ni">⚙️</span><span class="nl">Админ</span>     </button>
+  <button class="nav-btn active"          data-page="home"       onclick="nav('home')">       <span class="ni">🏠</span><span class="nl">Главная</span>   </button>
+  <button class="nav-btn"                 data-page="services"   onclick="nav('services')">   <span class="ni">💅</span><span class="nl">Услуги</span>    </button>
+  <button class="nav-btn nav-cta"         data-page="book"       onclick="nav('book')">       <span class="ni">📅</span><span class="nl">Записаться</span></button>
+  <button class="nav-btn"                 data-page="mybookings" onclick="nav('mybookings')"> <span class="ni">🗓</span><span class="nl">Мои записи</span></button>
+  <button class="nav-btn nav-admin hidden" data-page="admin"     onclick="nav('admin')">      <span class="ni">⚙️</span><span class="nl">Админ</span>    </button>
 </nav>
 
-<!-- Лоадер -->
 <div id="loader" class="loader hidden"><div class="spinner"></div></div>
-
-<!-- Тост -->
 <div id="toast" class="toast hidden"></div>
 
 <script src="app.js"></script>
