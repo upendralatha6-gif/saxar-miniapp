@@ -4,13 +4,12 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-const TG_USER     = tg?.initDataUnsafe?.user ?? null;
-const TG_INIT     = tg?.initData ?? '';
-const ADMIN_ID    = 941957416;
-const IS_ADMIN    = TG_USER?.id === ADMIN_ID;
-const IS_DEV      = !TG_INIT; // нет initData → режим разработки
+const TG_USER  = tg?.initDataUnsafe?.user ?? null;
+const TG_INIT  = tg?.initData ?? '';
+const ADMIN_ID = 941957416;
+const IS_ADMIN = TG_USER?.id === ADMIN_ID;
+const IS_DEV   = !TG_INIT;
 
-// Показываем кнопку админа если нужно
 if (IS_ADMIN || IS_DEV) {
   document.querySelector('.nav-admin')?.classList.remove('hidden');
 }
@@ -24,10 +23,10 @@ function nav(page) {
   document.getElementById(`page-${page}`)?.classList.add('active');
   curPage = page;
 
-  if (page === 'services')    loadServices();
-  if (page === 'book')        resetBook();
-  if (page === 'mybookings')  loadMyBookings();
-  if (page === 'admin')       loadAdminBookings();
+  if (page === 'services')   loadServices();
+  if (page === 'book')       resetBook();
+  if (page === 'mybookings') loadMyBookings();
+  if (page === 'admin')      loadAdminBookings();
 }
 
 // ══ API ══
@@ -48,8 +47,8 @@ async function api(path, opts = {}) {
 }
 
 // ══ UI УТИЛИТЫ ══
-function showLoader()  { document.getElementById('loader').classList.remove('hidden'); }
-function hideLoader()  { document.getElementById('loader').classList.add('hidden'); }
+function showLoader() { document.getElementById('loader').classList.remove('hidden'); }
+function hideLoader() { document.getElementById('loader').classList.add('hidden'); }
 
 let _toastTimer;
 function toast(msg, type = '') {
@@ -70,35 +69,79 @@ function spinner() {
   return '<div class="loading-wrap"><div class="spinner"></div></div>';
 }
 
-// ══ УСЛУГИ ══
+// ══ УСЛУГИ — с разделением по полу и категориям ══
 let _services = null;
+let _servicesGender = null; // 'female' | 'male'
 
 async function loadServices() {
   const list = document.getElementById('services-list');
-  list.innerHTML = spinner();
+  list.innerHTML = `
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="gender-btn active" id="gbtn-female" onclick="setServicesGender('female')">👩 Женский</button>
+      <button class="gender-btn" id="gbtn-male" onclick="setServicesGender('male')">👨 Мужской</button>
+    </div>
+    <div id="services-content">${spinner()}</div>`;
   try {
     _services ??= await api('/services');
-    list.innerHTML = _services.map(s => {
-      const [emo, ...words] = s.name.split(' ');
-      return `
-        <div class="svc-card">
-          <div class="svc-emoji">${emo}</div>
-          <div class="svc-info">
-            <div class="svc-name">${words.join(' ')}</div>
-            <div class="svc-price">${s.price}</div>
-            <div class="svc-dur">⏱ ${s.duration} мин</div>
-          </div>
-          <button class="svc-btn" onclick="quickBook('${s.id}')">Записаться</button>
-        </div>`;
-    }).join('');
+    _servicesGender ??= 'female';
+    renderServicesByGender(_servicesGender);
   } catch (e) {
-    list.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    document.getElementById('services-content').innerHTML =
+      `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
   }
+}
+
+function setServicesGender(gender) {
+  _servicesGender = gender;
+  document.getElementById('gbtn-female').classList.toggle('active', gender === 'female');
+  document.getElementById('gbtn-male').classList.toggle('active', gender === 'male');
+  renderServicesByGender(gender);
+}
+
+function renderServicesByGender(gender) {
+  const content = document.getElementById('services-content');
+  const filtered = _services.filter(s => s.gender === gender);
+
+  // Группируем по категориям
+  const cats = {};
+  filtered.forEach(s => {
+    if (!cats[s.category]) cats[s.category] = [];
+    cats[s.category].push(s);
+  });
+
+  if (!Object.keys(cats).length) {
+    content.innerHTML = '<div class="empty"><div class="empty-ico">📭</div><div class="empty-tit">Услуг не найдено</div></div>';
+    return;
+  }
+
+  content.innerHTML = Object.entries(cats).map(([cat, items]) => `
+    <div class="cat-block">
+      <div class="cat-title" onclick="toggleCat(this)">${cat} <span class="cat-arrow">▼</span></div>
+      <div class="cat-items">
+        ${items.map(s => `
+          <div class="svc-card">
+            <div class="svc-info">
+              <div class="svc-name">${s.name}</div>
+              <div class="svc-price">${s.price}</div>
+              <div class="svc-dur">⏱ ${s.duration} мин</div>
+            </div>
+            <button class="svc-btn" onclick="quickBook('${s.id}')">Записаться</button>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function toggleCat(el) {
+  const items = el.nextElementSibling;
+  const arrow = el.querySelector('.cat-arrow');
+  const isOpen = !items.classList.contains('collapsed');
+  items.classList.toggle('collapsed', isOpen);
+  arrow.textContent = isOpen ? '▶' : '▼';
 }
 
 function quickBook(svcId) {
   nav('book');
-  setTimeout(() => pickService(svcId), 120);
+  setTimeout(() => pickService(svcId), 150);
 }
 
 // ══ ЗАПИСЬ — состояние ══
@@ -106,8 +149,8 @@ const bk = {};
 
 function resetBook() {
   Object.keys(bk).forEach(k => delete bk[k]);
-  goStep('service');
-  loadBookServices();
+  goStep('gender');
+  renderBookGender();
 }
 
 function goStep(name) {
@@ -115,23 +158,62 @@ function goStep(name) {
   document.getElementById(`step-${name}`)?.classList.add('active');
 }
 
-// Шаг 1 — услуга
-async function loadBookServices() {
+// Шаг 0 — пол
+function renderBookGender() {
+  const list = document.getElementById('book-gender-list');
+  list.innerHTML = `
+    <div class="book-option" onclick="pickBookGender('female')">
+      <span class="book-option-emoji">👩</span>
+      <div><div class="book-option-name">Женские услуги</div></div>
+    </div>
+    <div class="book-option" onclick="pickBookGender('male')">
+      <span class="book-option-emoji">👨</span>
+      <div><div class="book-option-name">Мужские услуги</div></div>
+    </div>`;
+}
+
+function pickBookGender(gender) {
+  bk.gender = gender;
+  goStep('category');
+  loadBookCategories(gender);
+}
+
+// Шаг 1 — категория
+async function loadBookCategories(gender) {
+  const list = document.getElementById('book-category-list');
+  list.innerHTML = spinner();
+  try {
+    _services ??= await api('/services');
+    const cats = [...new Set(_services.filter(s => s.gender === gender).map(s => s.category))];
+    list.innerHTML = cats.map(cat => `
+      <div class="book-option" onclick="pickCategory('${cat.replace(/'/g, "\\'")}')">
+        <div><div class="book-option-name">${cat}</div></div>
+      </div>`).join('');
+  } catch (e) {
+    list.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+  }
+}
+
+function pickCategory(cat) {
+  bk.category = cat;
+  goStep('service');
+  loadBookServices(bk.gender, cat);
+}
+
+// Шаг 2 — услуга
+async function loadBookServices(gender, category) {
   const list = document.getElementById('book-service-list');
   list.innerHTML = spinner();
   try {
     _services ??= await api('/services');
-    list.innerHTML = _services.map(s => {
-      const [emo, ...words] = s.name.split(' ');
-      return `
-        <div class="book-option" onclick="pickService('${s.id}')">
-          <span class="book-option-emoji">${emo}</span>
-          <div>
-            <div class="book-option-name">${words.join(' ')}</div>
-            <div class="book-option-price">${s.price}</div>
-          </div>
-        </div>`;
-    }).join('');
+    const items = _services.filter(s => s.gender === gender && s.category === category);
+    list.innerHTML = items.map(s => `
+      <div class="book-option" onclick="pickService('${s.id}')">
+        <div>
+          <div class="book-option-name">${s.name}</div>
+          <div class="book-option-price">${s.price} · ⏱ ${s.duration} мин</div>
+        </div>
+      </div>`).join('');
   } catch (e) {
     list.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
   }
@@ -146,7 +228,7 @@ function pickService(id) {
   renderDates();
 }
 
-// Шаг 2 — дата
+// Шаг 3 — дата
 function renderDates() {
   const DAY = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
   const list = document.getElementById('dates-list');
@@ -155,10 +237,10 @@ function renderDates() {
   for (let i = 1; i <= 7; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
-    const dd  = String(d.getDate()).padStart(2,'0');
-    const mm  = String(d.getMonth()+1).padStart(2,'0');
+    const dd   = String(d.getDate()).padStart(2,'0');
+    const mm   = String(d.getMonth()+1).padStart(2,'0');
     const yyyy = d.getFullYear();
-    const str = `${dd}.${mm}.${yyyy}`;
+    const str  = `${dd}.${mm}.${yyyy}`;
     const isWe = d.getDay() === 0 || d.getDay() === 6;
     html += `
       <div class="date-option" onclick="pickDate('${str}')">
@@ -186,21 +268,20 @@ async function pickDate(str) {
   }
 }
 
-// Шаг 3 — время
+// Шаг 4 — время
 function pickTime(t, el) {
   document.querySelectorAll('.time-slot.free').forEach(s => s.classList.remove('sel'));
   el.classList.add('sel');
   bk.time = t;
   tg?.HapticFeedback?.selectionChanged();
   setTimeout(() => goStep('name'), 280);
-  // Pre-fill name from Telegram profile
   if (TG_USER) {
     const fullName = [TG_USER.first_name, TG_USER.last_name].filter(Boolean).join(' ');
     document.getElementById('inp-name').value = fullName;
   }
 }
 
-// Шаг 4 — имя
+// Шаг 5 — имя
 function submitName() {
   const v = document.getElementById('inp-name').value.trim();
   if (!v) { toast('Введите имя', 'err'); return; }
@@ -208,7 +289,7 @@ function submitName() {
   goStep('phone');
 }
 
-// Шаг 5 — телефон
+// Шаг 6 — телефон
 function submitPhone() {
   const v = document.getElementById('inp-phone').value.trim();
   if (!v) { toast('Введите номер телефона', 'err'); return; }
@@ -217,15 +298,15 @@ function submitPhone() {
   goStep('confirm');
 }
 
-// Шаг 6 — подтверждение
+// Шаг 7 — подтверждение
 function renderConfirm() {
   document.getElementById('confirm-card').innerHTML = confirmRows([
-    ['Услуга',   bk.serviceName, false],
-    ['Цена',     bk.servicePrice, true],
-    ['Дата',     bk.date,        false],
-    ['Время',    bk.time,        false],
-    ['Имя',      bk.name,        false],
-    ['Телефон',  bk.phone,       false],
+    ['Услуга',  bk.serviceName,  false],
+    ['Цена',    bk.servicePrice, true],
+    ['Дата',    bk.date,         false],
+    ['Время',   bk.time,         false],
+    ['Имя',     bk.name,         false],
+    ['Телефон', bk.phone,        false],
   ]);
 }
 
@@ -249,9 +330,9 @@ async function confirmBooking() {
       }),
     });
     document.getElementById('success-card').innerHTML = confirmRows([
-      ['Услуга', bk.serviceName, false],
+      ['Услуга', bk.serviceName,           false],
       ['Дата',   `${bk.date} в ${bk.time}`, false],
-      ['Адрес',  'г. Махачкала', false],
+      ['Адрес',  'г. Махачкала, ул. Ваххабитова 2к3', false],
     ]);
     goStep('success');
     tg?.HapticFeedback?.notificationOccurred('success');
@@ -372,7 +453,6 @@ async function loadAdminStats() {
         <div class="stat-mini"><div class="stat-val">${s.total_reviews}</div><div class="stat-lbl">Отзывов</div></div>
         <div class="stat-mini"><div class="stat-val">${ratingStr}</div><div class="stat-lbl">Рейтинг</div></div>
       </div>
-
       <div class="stat-block">
         <div class="stat-block-title">💅 Услуги</div>
         ${s.service_breakdown.map(r => `
@@ -384,13 +464,11 @@ async function loadAdminStats() {
             <div class="progress-wrap"><div class="progress-fill" style="width:${r.pct}%"></div></div>
           </div>`).join('')}
       </div>
-
       <div class="stat-block">
         <div class="stat-block-title">⏰ Популярные часы</div>
         ${s.top_hours.map(h => `
           <div class="stat-row"><span>${h.hour}</span><span class="stat-row-right">${h.count} записей</span></div>`).join('')}
       </div>
-
       <div class="stat-block">
         <div class="stat-block-title">📅 По дням</div>
         ${s.day_breakdown.map(d => `
@@ -430,3 +508,5 @@ async function loadAdminReviews() {
 
 // ══ СТАРТ ══
 nav('home');
+
+// CSS для новых элементов добавляется через style.css
