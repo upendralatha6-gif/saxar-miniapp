@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Салон Sахар 💖</title>
+  <title>Салон Saxar 🌸</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -11,30 +11,48 @@
 
 <div id="app">
 
-  <!-- ══ ГЛАВНАЯ ══ -->
+  <!-- ── ГЛАВНАЯ ── -->
   <section id="page-home" class="page active">
     <div class="hero">
-      <div class="hero-logo">💖</div>
-      <h1 class="hero-title">Салон красоты Sахар</h1>
+      <div class="hero-logo">🌸</div>
+      <h1 class="hero-title">Салон красоты Saxar</h1>
       <p class="hero-subtitle">Республика Дагестан, ул. Магомеда Ярагского, 42А</p>
     </div>
 
     <div class="info-list">
-      <div class="info-row"><span class="info-icon">📍</span><div><div class="info-lbl">Адрес</div><div class="info-val">Республика Дагестан, ул. Магомеда Ярагского, 42А</div></div></div>
-      <div class="info-row"><span class="info-icon">📞</span><div><div class="info-lbl">Телефон</div><div class="info-val">+89681234567</div></div></div>
-      <div class="info-row"><span class="info-icon">💬</span><div><div class="info-lbl">Telegram</div><div class="info-val"><a href="https://t.me/coachgnv" style="color:var(--pink);text-decoration:none;font-weight:700">@coachgnv 💬</a></div></div></div>
+      <div class="info-row">
+        <span class="info-icon">📍</span>
+        <div>
+          <div class="info-lbl">Адрес</div>
+          <div class="info-val">Республика Дагестан, ул. Магомеда Ярагского, 42А</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">📞</span>
+        <div>
+          <div class="info-lbl">Телефон</div>
+          <div class="info-val">+89681234567</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon">💬</span>
+        <div>
+          <div class="info-lbl">Telegram</div>
+          <div class="info-val"><a href="https://t.me/coachgnv">@coachgnv 💬</a></div>
+        </div>
+      </div>
     </div>
 
     <button class="btn-primary mt-16" onclick="nav('book')">📅 Записаться на процедуру</button>
   </section>
 
-  <!-- ══ УСЛУГИ ══ -->
+  <!-- ── УСЛУГИ ── -->
   <section id="page-services" class="page">
     <div class="page-header"><h2>💅 Услуги и цены</h2></div>
     <div id="services-list"></div>
   </section>
 
-  <!-- ══ ЗАПИСЬ ══ -->
+  <!-- ── ЗАПИСЬ ── -->
   <section id="page-book" class="page">
 
     <!-- Шаг 0 — пол -->
@@ -43,14 +61,14 @@
         <h2>📅 Запись</h2>
         <p class="hint">Шаг 1 из 7 — выбери раздел</p>
       </div>
-      <div id="book-gender-list"></div>
+      <div class="gender-btns" id="book-gender-list"></div>
     </div>
 
     <!-- Шаг 1 — категория -->
     <div id="step-category" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('gender')">← Назад</button>
-        <h2>📋 Категория</h2>
+        <h2>📁 Категория</h2>
         <p class="hint">Шаг 2 из 7 — выбери категорию</p>
       </div>
       <div id="book-category-list"></div>
@@ -60,7 +78,7 @@
     <div id="step-service" class="step">
       <div class="page-header">
         <button class="back-btn" onclick="goStep('category')">← Назад</button>
-        <h2>💅 Услуга</h2>
+        <h2>✨ Услуга</h2>
         <p class="hint">Шаг 3 из 7 — выбери услугу</p>
       </div>
       <div id="book-service-list"></div>
@@ -83,7 +101,7 @@
         <h2>⏰ Выбери время</h2>
         <p class="hint">Шаг 5 из 7</p>
       </div>
-      <div class="legend"><span>✅ свободно</span><span>❌ занято</span></div>
+      <div class="legend"><span>✓ свободно</span><span>✗ занято</span></div>
       <div id="times-grid" class="times-grid"></div>
     </div>
 
@@ -116,7 +134,7 @@
         <h2>📋 Подтверждение</h2>
       </div>
       <div id="confirm-card" class="info-card-big"></div>
-      <button class="btn-primary mt-16" onclick="confirmBooking()">✅ Подтвердить запись</button>
+      <button class="btn-primary mt-16" onclick="confirmBooking()">✓ Подтвердить запись</button>
       <button class="btn-secondary mt-8" onclick="nav('home')">Отмена</button>
     </div>
 
@@ -132,15 +150,15 @@
 
   </section>
 
-  <!-- ══ МОИ ЗАПИСИ ══ -->
+  <!-- ── МОИ ЗАПИСИ ── -->
   <section id="page-mybookings" class="page">
-    <div class="page-header"><h2>🗓 Мои записи</h2></div>
+    <div class="page-header"><h2>📋 Мои записи</h2></div>
     <div id="my-bookings-list"></div>
   </section>
 
-  <!-- ══ АДМИНИСТРАТОР ══ -->
+  <!-- ── АДМИНИСТРАТОР ── -->
   <section id="page-admin" class="page">
-    <div class="page-header"><h2>👤 Администратор</h2></div>
+    <div class="page-header"><h2>⚙️ Администратор</h2></div>
     <div class="tab-bar">
       <button class="tab active" onclick="showTab('bookings')">Записи</button>
       <button class="tab" onclick="showTab('stats')">Статистика</button>
@@ -153,13 +171,13 @@
 
 </div>
 
-<!-- ══ НИЖНЯЯ НАВИГАЦИЯ ══ -->
+<!-- ── НИЖНЯЯ НАВИГАЦИЯ ── -->
 <nav class="bottom-nav">
-  <button class="nav-btn active"          data-page="home"       onclick="nav('home')">       <span class="ni">🏠</span><span class="nl">Главная</span>   </button>
-  <button class="nav-btn"                 data-page="services"   onclick="nav('services')">   <span class="ni">💅</span><span class="nl">Услуги</span>    </button>
-  <button class="nav-btn nav-cta"         data-page="book"       onclick="nav('book')">       <span class="ni">📅</span><span class="nl">Записаться</span></button>
-  <button class="nav-btn"                 data-page="mybookings" onclick="nav('mybookings')"> <span class="ni">🗓</span><span class="nl">Мои записи</span></button>
-  <button class="nav-btn nav-admin hidden" data-page="admin"     onclick="nav('admin')">      <span class="ni">⚙️</span><span class="nl">Админ</span>    </button>
+  <button class="nav-btn active"           data-page="home"       onclick="nav('home')">       <span class="ni">🏠</span><span class="nl">Главная</span>   </button>
+  <button class="nav-btn"                  data-page="services"   onclick="nav('services')">   <span class="ni">💅</span><span class="nl">Услуги</span>    </button>
+  <button class="nav-btn nav-cta"          data-page="book"       onclick="nav('book')">       <span class="ni">🌸</span><span class="nl">Записаться</span></button>
+  <button class="nav-btn"                  data-page="mybookings" onclick="nav('mybookings')"> <span class="ni">📋</span><span class="nl">Мои записи</span></button>
+  <button class="nav-btn nav-admin hidden" data-page="admin"      onclick="nav('admin')">      <span class="ni">⚙️</span><span class="nl">Админ</span>    </button>
 </nav>
 
 <div id="loader" class="loader hidden"><div class="spinner"></div></div>
