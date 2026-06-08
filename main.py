@@ -382,62 +382,6 @@ SERVICES = {
     "w_kosm_piling_pov": {"name": "Поверхностные пилинги", "price": "2600 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
     "w_kosm_piling_sred": {"name": "Срединные (зимние) пилинги Medik Peel", "price": "4000 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
 
-    # ========== МУЖСКОЙ ПРАЙС ==========
-
-    # 🪒 МУЖСКАЯ ДЕПИЛЯЦИЯ — ЛИЦО И ТЕЛО
-    "m_dep_lico_sugar": {"name": "Область лица (сахар)", "price": "500–600 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_lico_polvosk": {"name": "Область лица (полимерный воск)", "price": "600–700 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_lico_skins": {"name": "Область лица (SKINS POSTAVKA #1)", "price": "700–800 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_podm_vosk": {"name": "Подмышки (воск/сахар)", "price": "400–600 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_podm_polvosk": {"name": "Подмышки (полимерный воск)", "price": "700–850 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_podm_skins": {"name": "Подмышки (SKINS POSTAVKA #1)", "price": "800–950 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_podm_gel": {"name": "Подмышки (гелевый воск)", "price": "800–950 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nogi_do_vosk": {"name": "Ноги до колен (воск)", "price": "800–1000 руб", "duration": 30, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nogi_do_sugar": {"name": "Ноги до колен (сахар)", "price": "1250–1350 руб", "duration": 35, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nogi_do_polvosk": {"name": "Ноги до колен (полимерный воск)", "price": "1600–1700 руб", "duration": 40, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nogi_pol_vosk": {"name": "Ноги полностью (воск)", "price": "1600–1700 руб", "duration": 60, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nogi_pol_sugar": {"name": "Ноги полностью (сахар)", "price": "2450–2600 руб", "duration": 70, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nogi_pol_polvosk": {"name": "Ноги полностью (полимерный воск)", "price": "3150–3250 руб", "duration": 80, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_ruki_do_vosk": {"name": "Руки до локтя (воск)", "price": "400–500 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_ruki_pol_vosk": {"name": "Руки полностью (воск)", "price": "800–1000 руб", "duration": 35, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_ruki_pol_sugar": {"name": "Руки полностью (сахар)", "price": "1300–1500 руб", "duration": 45, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_ruki_pol_polvosk": {"name": "Руки полностью (полимерный воск)", "price": "1600–1700 руб", "duration": 50, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_spina_vosk": {"name": "Спина/Плечи/Живот (воск)", "price": "400–600 руб", "duration": 25, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_spina_sugar": {"name": "Спина/Плечи/Живот (сахар)", "price": "800–1000 руб", "duration": 30, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_spina_polvosk": {"name": "Спина/Плечи/Живот (полимерный воск)", "price": "1050–1200 руб", "duration": 35, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_spina_skins": {"name": "Спина/Плечи/Живот (SKINS #1)", "price": "1350–1450 руб", "duration": 40, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_grud_vosk": {"name": "Грудь/Поясница (воск)", "price": "500–650 руб", "duration": 20, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_grud_sugar": {"name": "Грудь/Поясница (сахар)", "price": "800–850 руб", "duration": 25, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_grud_polvosk": {"name": "Грудь/Поясница (полимерный воск)", "price": "1050–1200 руб", "duration": 30, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_grud_skins": {"name": "Грудь/Поясница (SKINS #1)", "price": "1350–1450 руб", "duration": 35, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nos_polvosk": {"name": "Нос/Уши (полимерный воск)", "price": "400 руб", "duration": 10, "category": "🪒 Депиляция", "gender": "male"},
-    "m_dep_nos_skins": {"name": "Нос/Уши (SKINS #1)", "price": "550 руб", "duration": 10, "category": "🪒 Депиляция", "gender": "male"},
-
-    # ⚡ ЛАЗЕРНАЯ ЭПИЛЯЦИЯ (мужская)
-    "m_lazer_podm": {"name": "Подмышечные впадины", "price": "800–1000 руб", "duration": 20, "category": "⚡ Лазерная эпиляция", "gender": "male"},
-    "m_lazer_nogi_do": {"name": "Ноги до колен", "price": "2000–2200 руб", "duration": 50, "category": "⚡ Лазерная эпиляция", "gender": "male"},
-    "m_lazer_nogi_vyshe": {"name": "Ноги выше колен", "price": "2000–2200 руб", "duration": 50, "category": "⚡ Лазерная эпиляция", "gender": "male"},
-    "m_lazer_nogi_pol": {"name": "Ноги полностью", "price": "4000–4400 руб", "duration": 90, "category": "⚡ Лазерная эпиляция", "gender": "male"},
-    "m_lazer_spina": {"name": "Спина/Грудь/Живот", "price": "1000–2400 руб", "duration": 60, "category": "⚡ Лазерная эпиляция", "gender": "male"},
-    "m_lazer_lico": {"name": "Лицо", "price": "800–1000 руб", "duration": 20, "category": "⚡ Лазерная эпиляция", "gender": "male"},
-
-    # ✂️ СТРИЖКА (мужская)
-    "m_striz": {"name": "Стрижка", "price": "1000–1300 руб", "duration": 45, "category": "✂️ Стрижка", "gender": "male"},
-    "m_striz_feyd": {"name": "Стрижка + фейд", "price": "1300–1600 руб", "duration": 60, "category": "✂️ Стрижка", "gender": "male"},
-    "m_boroda": {"name": "Борода", "price": "500–700 руб", "duration": 30, "category": "✂️ Стрижка", "gender": "male"},
-
-    # 👁 БРОВИ (мужские)
-    "m_brov_oform": {"name": "Оформление бровей пинцетом/воском", "price": "450–550 руб", "duration": 20, "category": "👁 Брови", "gender": "male"},
-
-    # 💅 МАНИКЮР (мужской)
-    "m_manik": {"name": "Маникюр", "price": "1000–1100 руб", "duration": 45, "category": "💅 Маникюр", "gender": "male"},
-
-    # 🦶 ПЕДИКЮР (мужской)
-    "m_pedik": {"name": "Педикюр", "price": "1650–1800 руб", "duration": 60, "category": "🦶 Педикюр", "gender": "male"},
-    "m_pedik_palchiki": {"name": "Обработка пальчиков", "price": "1000–1200 руб", "duration": 30, "category": "🦶 Педикюр", "gender": "male"},
-    "m_pedik_stopy": {"name": "Обработка стоп", "price": "1000–1200 руб", "duration": 30, "category": "🦶 Педикюр", "gender": "male"},
-    "m_pedik_golden": {"name": "Педикюр Golden Trace", "price": "2350–2400 руб", "duration": 90, "category": "🦶 Педикюр", "gender": "male"},
-    "m_pedik_smart": {"name": "Smart-педикюр", "price": "2050–2200 руб", "duration": 90, "category": "🦶 Педикюр", "gender": "male"},
 }
 
 AVAILABLE_TIMES = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
