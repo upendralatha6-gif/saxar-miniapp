@@ -75,31 +75,14 @@ let _servicesGender = null; // 'female' | 'male'
 
 async function loadServices() {
   const list = document.getElementById('services-list');
-  list.innerHTML = `
-    <div class="gender-btns" style="margin-bottom:16px">
-      <button class="gender-btn active" id="gbtn-female" onclick="setServicesGender('female')">
-        <span class="g-icon">👩</span><span>Женский</span>
-      </button>
-      <button class="gender-btn" id="gbtn-male" onclick="setServicesGender('male')">
-        <span class="g-icon">👨</span><span>Мужской</span>
-      </button>
-    </div>
-    <div id="services-content">${spinner()}</div>`;
+  list.innerHTML = `<div id="services-content">${spinner()}</div>`;
   try {
     _services ??= await api('/services');
-    _servicesGender ??= 'female';
-    renderServicesByGender(_servicesGender);
+    renderServicesByGender('female');
   } catch (e) {
     document.getElementById('services-content').innerHTML =
       `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
   }
-}
-
-function setServicesGender(gender) {
-  _servicesGender = gender;
-  document.getElementById('gbtn-female').classList.toggle('active', gender === 'female');
-  document.getElementById('gbtn-male').classList.toggle('active', gender === 'male');
-  renderServicesByGender(gender);
 }
 
 function renderServicesByGender(gender) {
@@ -159,33 +142,14 @@ const bk = {};
 
 function resetBook() {
   Object.keys(bk).forEach(k => delete bk[k]);
-  goStep('gender');
-  renderBookGender();
+  bk.gender = 'female';
+  goStep('category');
+  loadBookCategories('female');
 }
 
 function goStep(name) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${name}`)?.classList.add('active');
-}
-
-// Шаг 0 — пол
-function renderBookGender() {
-  const list = document.getElementById('book-gender-list');
-  list.innerHTML = `
-    <button class="gender-btn" onclick="pickBookGender('female')">
-      <span class="g-icon">👩</span>
-      <span>Женский</span>
-    </button>
-    <button class="gender-btn" onclick="pickBookGender('male')">
-      <span class="g-icon">👨</span>
-      <span>Мужской</span>
-    </button>`;
-}
-
-function pickBookGender(gender) {
-  bk.gender = gender;
-  goStep('category');
-  loadBookCategories(gender);
 }
 
 // Шаг 1 — категория
