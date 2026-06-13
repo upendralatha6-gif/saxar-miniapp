@@ -14,6 +14,14 @@ if (IS_ADMIN || IS_DEV) {
   document.querySelector('.nav-admin')?.classList.remove('hidden');
 }
 
+// ── ХЕЛПЕРЫ ИКОНОК / ТЕКСТА ──
+// Возвращает inline-иконку из SVG-спрайта
+function icon(id) { return `<svg><use href="#i-${id}"/></svg>`; }
+// Убирает ведущий эмодзи из названия категории для чистого вида
+function cleanCat(s) { return s.replace(/^[^\p{L}\p{N}]+/u, '').trim(); }
+// Экранирование строки для вставки в onclick='...'
+function esc(s) { return String(s).replace(/'/g, "\\'"); }
+
 // ── НАВИГАЦИЯ ──
 let curPage = 'home';
 
@@ -22,6 +30,7 @@ function nav(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
   document.getElementById(`page-${page}`)?.classList.add('active');
   curPage = page;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 
   if (page === 'services')   loadServices();
   if (page === 'book')       resetBook();
@@ -69,20 +78,57 @@ function spinner() {
   return '<div class="loading-wrap"><div class="spinner"></div></div>';
 }
 
-// ── УСЛУГИ — с разделением по полу и категориям ──
+// Унифицированные пустые/ошибочные состояния
+function emptyState(ico, title, text = '', btn = '') {
+  return `<div class="empty">
+    <div class="empty-ico">${icon(ico)}</div>
+    <div class="empty-tit">${title}</div>
+    ${text ? `<div class="empty-txt">${text}</div>` : ''}
+    ${btn}
+  </div>`;
+}
+function errorState(msg) { return emptyState('alert', 'Что-то пошло не так', msg); }
+
+// ── УСЛУГИ — разделение по полу и категориям ──
 let _services = null;
-let _servicesGender = null; // 'female' | 'male'
+
+// Разделы (полы), реально присутствующие в прайсе
+const GENDERS = [
+  { key: 'female', label: 'Женский', ico: 'venus' },
+  { key: 'male',   label: 'Мужской', ico: 'mars'  },
+];
+function getGenders() {
+  const present = new Set((_services ?? []).map(s => s.gender));
+  return GENDERS.filter(g => present.has(g.key));
+}
 
 async function loadServices() {
   const list = document.getElementById('services-list');
   list.innerHTML = `<div id="services-content">${spinner()}</div>`;
   try {
     _services ??= await api('/services');
-    renderServicesByGender('female');
+    const avail = getGenders();
+    const seg = document.getElementById('services-gender-seg');
+    // переключатель пола показываем только если разделов несколько
+    if (avail.length > 1) {
+      seg.innerHTML = avail.map((g, i) =>
+        `<button class="seg-btn ${i === 0 ? 'active' : ''}" onclick="switchServicesGender('${g.key}', this)">${g.label}</button>`
+      ).join('');
+      seg.classList.remove('hidden');
+    } else {
+      seg.classList.add('hidden');
+    }
+    renderServicesByGender(avail[0]?.key ?? 'female');
   } catch (e) {
-    document.getElementById('services-content').innerHTML =
-      `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    document.getElementById('services-content').innerHTML = errorState(e.message);
   }
+}
+
+// Переключатель пола на странице услуг (сегмент-контрол)
+function switchServicesGender(gender, btn) {
+  document.querySelectorAll('#services-gender-seg .seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderServicesByGender(gender);
 }
 
 function renderServicesByGender(gender) {
@@ -96,7 +142,7 @@ function renderServicesByGender(gender) {
   });
 
   if (!Object.keys(cats).length) {
-    content.innerHTML = '<div class="empty"><div class="empty-ico">😭</div><div class="empty-tit">Услуг не найдено</div></div>';
+    content.innerHTML = emptyState('inbox', 'В этом разделе пока нет услуг');
     return;
   }
 
@@ -105,20 +151,22 @@ function renderServicesByGender(gender) {
       <div class="cat-title" onclick="toggleCat(this)">
         <div class="cat-title-left">
           <span class="cat-dot"></span>
-          <span>${cat}</span>
+          <span class="cat-name">${cleanCat(cat)}</span>
           <span class="cat-count">${items.length}</span>
         </div>
-        <span class="cat-arrow">▶</span>
+        <span class="cat-arrow">${icon('chev-r')}</span>
       </div>
       <div class="cat-items collapsed">
         ${items.map(s => `
           <div class="svc-card">
             <div class="svc-info">
               <div class="svc-name">${s.name}</div>
-              <div class="svc-price">${s.price}</div>
-              <div class="svc-dur">⏱ ${s.duration} мин</div>
+              <div class="svc-meta">
+                <span class="svc-price">${s.price}</span>
+                <span class="svc-dur">${icon('clock')} ${s.duration} мин</span>
+              </div>
             </div>
-            <button class="svc-btn" onclick="quickBook('${s.id}')">Записаться</button>
+            <button class="svc-btn" onclick="quickBook('${esc(s.id)}')">Записаться</button>
           </div>`).join('')}
       </div>
     </div>`).join('');
@@ -133,38 +181,101 @@ function toggleCat(el) {
 }
 
 function quickBook(svcId) {
+  const svc = _services?.find(s => s.id === svcId);
   nav('book');
+  if (svc) bk.gender = svc.gender;
   setTimeout(() => pickService(svcId), 150);
 }
 
 // ── ЗАПИСЬ — состояние ──
 const bk = {};
 
-function resetBook() {
+async function resetBook() {
   Object.keys(bk).forEach(k => delete bk[k]);
-  bk.gender = 'female';
-  goStep('category');
-  loadBookCategories('female');
+  try { _services ??= await api('/services'); } catch (_) {}
+  const avail = getGenders();
+  // если раздел один — шаг выбора пола пропускаем
+  if (avail.length <= 1) {
+    bk.gender = avail[0]?.key ?? 'female';
+    goStep('category');
+    loadBookCategories(bk.gender);
+  } else {
+    goStep('gender');
+    loadBookGenders();
+  }
 }
+
+// Возврат с шага категории: к выбору пола либо на главную
+function backFromCategory() {
+  if (getGenders().length > 1) goStep('gender');
+  else nav('home');
+}
+
+// Последовательность шагов записи (gender может выпадать)
+const BOOK_STEPS = ['gender', 'category', 'service', 'date', 'time', 'name', 'phone'];
 
 function goStep(name) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${name}`)?.classList.add('active');
+  updateStepMeta(name);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Шаг 1 — категория
+// Пересчитывает «шаг N из M» и прогресс-точки с учётом пропуска выбора пола
+function updateStepMeta(name) {
+  const seq = getGenders().length > 1 ? BOOK_STEPS : BOOK_STEPS.filter(s => s !== 'gender');
+  const idx = seq.indexOf(name);
+  if (idx === -1) return;
+  const stepEl = document.getElementById(`step-${name}`);
+  const eb = stepEl?.querySelector('[data-step]');
+  const pr = stepEl?.querySelector('[data-progress]');
+  if (eb) eb.textContent = `Запись · шаг ${idx + 1} из ${seq.length}`;
+  if (pr) pr.innerHTML = seq.map((_, i) => `<i class="sp-dot ${i <= idx ? 'done' : ''}"></i>`).join('');
+}
+
+// Шаг 1 — пол (раздел)
+async function loadBookGenders() {
+  const list = document.getElementById('book-gender-list');
+  list.innerHTML = spinner();
+  try {
+    _services ??= await api('/services');
+    const present = new Set(_services.map(s => s.gender));
+    const avail = GENDERS.filter(g => present.has(g.key));
+    list.innerHTML = avail.map(g => `
+      <button class="gender-btn" onclick="pickGender('${g.key}')">
+        <span class="g-icon">${icon(g.ico)}</span>
+        <span>${g.label}</span>
+      </button>`).join('');
+  } catch (e) {
+    list.innerHTML = errorState(e.message);
+  }
+}
+
+function pickGender(gender) {
+  bk.gender = gender;
+  tg?.HapticFeedback?.selectionChanged();
+  goStep('category');
+  loadBookCategories(gender);
+}
+
+// Шаг 2 — категория
 async function loadBookCategories(gender) {
   const list = document.getElementById('book-category-list');
   list.innerHTML = spinner();
   try {
     _services ??= await api('/services');
     const cats = [...new Set(_services.filter(s => s.gender === gender).map(s => s.category))];
+    if (!cats.length) { list.innerHTML = emptyState('inbox', 'Нет доступных категорий'); return; }
     list.innerHTML = cats.map(cat => `
-      <div class="book-option" onclick="pickCategory('${cat.replace(/'/g, "\\'")}')">
-        <div><div class="book-option-name">${cat}</div></div>
+      <div class="book-option" onclick="pickCategory('${esc(cat)}')">
+        <div class="book-option-icon">${icon('folder')}</div>
+        <div class="book-option-body">
+          <div class="book-option-name">${cleanCat(cat)}</div>
+        </div>
+        <span class="book-option-arrow">${icon('chev-r')}</span>
       </div>`).join('');
   } catch (e) {
-    list.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    list.innerHTML = errorState(e.message);
   }
 }
 
@@ -174,7 +285,7 @@ function pickCategory(cat) {
   loadBookServices(bk.gender, cat);
 }
 
-// Шаг 2 — услуга
+// Шаг 3 — услуга
 async function loadBookServices(gender, category) {
   const list = document.getElementById('book-service-list');
   list.innerHTML = spinner();
@@ -182,15 +293,16 @@ async function loadBookServices(gender, category) {
     _services ??= await api('/services');
     const items = _services.filter(s => s.gender === gender && s.category === category);
     list.innerHTML = items.map(s => `
-      <div class="book-option" onclick="pickService('${s.id}')">
-        <div style="flex:1">
+      <div class="book-option" onclick="pickService('${esc(s.id)}')">
+        <div class="book-option-icon">${icon('spark')}</div>
+        <div class="book-option-body">
           <div class="book-option-name">${s.name}</div>
-          <div class="book-option-price">${s.price} · ⏱ ${s.duration} мин</div>
+          <div class="book-option-price">${s.price} <span class="svc-dur">${icon('clock')} ${s.duration} мин</span></div>
         </div>
-        <span class="book-option-arrow">›</span>
+        <span class="book-option-arrow">${icon('chev-r')}</span>
       </div>`).join('');
   } catch (e) {
-    list.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    list.innerHTML = errorState(e.message);
   }
 }
 
@@ -203,10 +315,10 @@ function pickService(id) {
   renderDates();
 }
 
-// Шаг 3 — дата
+// Шаг 4 — дата
 function renderDates() {
-  const DAY = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-  const MONTHS = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  const DAY_SHORT = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  const DAY_FULL  = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
   const list = document.getElementById('dates-list');
   const today = new Date();
   let html = '';
@@ -220,12 +332,15 @@ function renderDates() {
     const isWe = d.getDay() === 0 || d.getDay() === 6;
     html += `
       <div class="date-option ${isWe ? 'date-weekend' : ''}" onclick="pickDate('${str}')">
-        <div class="date-day-badge">${DAY[d.getDay()]}</div>
-        <div>
-          <div class="date-val">${dd} ${MONTHS[d.getMonth()]}</div>
-          <div class="date-subval">${yyyy}</div>
+        <div class="date-day-badge">
+          <span class="dd-num">${d.getDate()}</span>
+          <span class="dd-day">${DAY_SHORT[d.getDay()]}</span>
         </div>
-        <span class="book-option-arrow" style="margin-left:auto">›</span>
+        <div>
+          <div class="date-val">${DAY_FULL[d.getDay()]}</div>
+          <div class="date-subval">${str}</div>
+        </div>
+        <span class="book-option-arrow" style="margin-left:auto">${icon('chev-r')}</span>
       </div>`;
   }
   list.innerHTML = html;
@@ -241,14 +356,14 @@ async function pickDate(str) {
     grid.innerHTML = slots.map(t => `
       <div class="time-slot ${t.available ? 'free' : 'busy'}"
            ${t.available ? `onclick="pickTime('${t.time}', this)"` : ''}>
-        ${t.available ? '✓' : '✗'} ${t.time}
+        ${t.time}
       </div>`).join('');
   } catch (e) {
-    grid.innerHTML = `<p style="color:var(--hint);grid-column:1/-1">${e.message}</p>`;
+    grid.innerHTML = `<p style="color:var(--ink-2);grid-column:1/-1">${e.message}</p>`;
   }
 }
 
-// Шаг 4 — время
+// Шаг 5 — время
 function pickTime(t, el) {
   document.querySelectorAll('.time-slot.free').forEach(s => s.classList.remove('sel'));
   el.classList.add('sel');
@@ -261,7 +376,7 @@ function pickTime(t, el) {
   }
 }
 
-// Шаг 5 — имя
+// Шаг 6 — имя
 function submitName() {
   const v = document.getElementById('inp-name').value.trim();
   if (!v) { toast('Введите имя', 'err'); return; }
@@ -269,7 +384,7 @@ function submitName() {
   goStep('phone');
 }
 
-// Шаг 6 — телефон
+// Шаг 7 — телефон
 function submitPhone() {
   const v = document.getElementById('inp-phone').value.trim();
   if (!v) { toast('Введите номер телефона', 'err'); return; }
@@ -278,11 +393,11 @@ function submitPhone() {
   goStep('confirm');
 }
 
-// Шаг 7 — подтверждение
+// Подтверждение
 function renderConfirm() {
   document.getElementById('confirm-card').innerHTML = confirmRows([
     ['Услуга',   bk.serviceName,  false],
-    ['Цена',     bk.servicePrice, true],
+    ['Стоимость',bk.servicePrice, true],
     ['Дата',     bk.date,         false],
     ['Время',    bk.time,         false],
     ['Имя',      bk.name,         false],
@@ -311,8 +426,8 @@ async function confirmBooking() {
     });
     document.getElementById('success-card').innerHTML = confirmRows([
       ['Услуга', bk.serviceName,              false],
-      ['Дата',   `${bk.date} в ${bk.time}`,   false],
-      ['Адрес',  'Республика Дагестан, ул. Магомеда Ярагского, 42А', false],
+      ['Когда',  `${bk.date} в ${bk.time}`,   false],
+      ['Адрес',  'ул. Магомеда Ярагского, 42А', false],
     ]);
     goStep('success');
     tg?.HapticFeedback?.notificationOccurred('success');
@@ -330,27 +445,29 @@ async function loadMyBookings() {
   try {
     const items = await api('/my-bookings');
     if (!items.length) {
-      list.innerHTML = `
-        <div class="empty">
-          <div class="empty-ico">😭</div>
-          <div class="empty-tit">Нет предстоящих записей</div>
-          <div class="empty-txt">Запишись прямо сейчас!</div>
-          <button class="btn-primary" style="max-width:200px" onclick="nav('book')">📅 Записаться</button>
-        </div>`;
+      list.innerHTML = emptyState(
+        'inbox',
+        'Пока нет записей',
+        'Запишитесь на удобное время прямо сейчас',
+        `<button class="btn-primary" style="max-width:220px;margin:0 auto" onclick="nav('book')">${icon('calendar')}Записаться</button>`
+      );
       return;
     }
     list.innerHTML = items.map(b => `
       <div class="booking-card" id="bk-${b.id}">
         <div class="bk-header">
           <div class="bk-name">${b.service_name}</div>
-          <div class="bk-id">#${b.id}</div>
+          <div class="bk-id">№${b.id}</div>
         </div>
-        <div class="bk-meta"><span>📅 <b>${b.date}</b></span><span>⏰ <b>${b.time}</b></span></div>
+        <div class="bk-meta">
+          <span>${icon('calendar')}<b>${b.date}</b></span>
+          <span>${icon('clock')}<b>${b.time}</b></span>
+        </div>
         <div class="bk-price">${b.service_price}</div>
-        <button class="btn-cancel" onclick="cancelMyBooking(${b.id})">✕ Отменить запись</button>
+        <button class="btn-cancel" onclick="cancelMyBooking(${b.id})">Отменить запись</button>
       </div>`).join('');
   } catch (e) {
-    list.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    list.innerHTML = errorState(e.message);
   }
 }
 
@@ -363,7 +480,7 @@ async function cancelMyBooking(id) {
     document.getElementById(`bk-${id}`)?.remove();
     toast('Запись отменена', 'ok');
     tg?.HapticFeedback?.notificationOccurred('warning');
-    if (!document.querySelector('.booking-card')) loadMyBookings();
+    if (!document.querySelector('#my-bookings-list .booking-card')) loadMyBookings();
   } catch (e) {
     toast(e.message, 'err');
   } finally {
@@ -387,27 +504,30 @@ async function loadAdminBookings() {
   el.innerHTML = spinner();
   try {
     const items = await api('/admin/bookings');
-    if (!items.length) {
-      el.innerHTML = '<div class="empty"><div class="empty-ico">😭</div><div class="empty-tit">Записей пока нет</div></div>';
-      return;
-    }
+    if (!items.length) { el.innerHTML = emptyState('inbox', 'Записей пока нет'); return; }
     el.innerHTML = items.map(b => `
       <div class="booking-card" id="abk-${b.id}">
         <div class="bk-header">
           <div class="bk-name">${b.service_name}</div>
-          <div class="bk-id">#${b.id}</div>
+          <div class="bk-id">№${b.id}</div>
         </div>
-        <div class="bk-meta"><span>📅 <b>${b.date}</b></span><span>⏰ <b>${b.time}</b></span></div>
-        <div style="font-size:14px;margin-bottom:12px">👤 <b>${b.client_name}</b> · 📱 ${b.phone}</div>
-        <button class="btn-cancel" onclick="adminCancel(${b.id})">✕ Отменить</button>
+        <div class="bk-meta">
+          <span>${icon('calendar')}<b>${b.date}</b></span>
+          <span>${icon('clock')}<b>${b.time}</b></span>
+        </div>
+        <div class="bk-client">
+          <span>${icon('user')} <b>${b.client_name}</b></span>
+          <span>${icon('phone')} ${b.phone}</span>
+        </div>
+        <button class="btn-cancel" onclick="adminCancel(${b.id})">Отменить запись</button>
       </div>`).join('');
   } catch (e) {
-    el.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    el.innerHTML = errorState(e.message);
   }
 }
 
 async function adminCancel(id) {
-  const ok = await confirmDlg(`Отменить запись #${id}?`);
+  const ok = await confirmDlg(`Отменить запись №${id}?`);
   if (!ok) return;
   showLoader();
   try {
@@ -426,7 +546,7 @@ async function loadAdminStats() {
   el.innerHTML = spinner();
   try {
     const s = await api('/admin/stats');
-    const ratingStr = s.avg_rating ? `${s.avg_rating}⭐` : '—';
+    const ratingStr = s.avg_rating ? `${s.avg_rating}` : '—';
     el.innerHTML = `
       <div class="stat-grid">
         <div class="stat-mini"><div class="stat-val">${s.total_bookings}</div><div class="stat-lbl">Записей</div></div>
@@ -434,28 +554,28 @@ async function loadAdminStats() {
         <div class="stat-mini"><div class="stat-val">${ratingStr}</div><div class="stat-lbl">Рейтинг</div></div>
       </div>
       <div class="stat-block">
-        <div class="stat-block-title">💅 Услуги</div>
+        <div class="stat-block-title">${icon('tag')} Услуги</div>
         ${s.service_breakdown.map(r => `
           <div style="margin-bottom:14px">
-            <div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px">
+            <div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px">
               <span>${r.service_name}</span>
-              <b style="color:var(--pink)">${r.count} (${r.pct}%)</b>
+              <b style="color:var(--brand)">${r.count} · ${r.pct}%</b>
             </div>
             <div class="progress-wrap"><div class="progress-fill" style="width:${r.pct}%"></div></div>
           </div>`).join('')}
       </div>
       <div class="stat-block">
-        <div class="stat-block-title">⏰ Популярные часы</div>
+        <div class="stat-block-title">${icon('clock')} Популярные часы</div>
         ${s.top_hours.map(h => `
           <div class="stat-row"><span>${h.hour}</span><span class="stat-row-right">${h.count} записей</span></div>`).join('')}
       </div>
       <div class="stat-block">
-        <div class="stat-block-title">📅 По дням</div>
+        <div class="stat-block-title">${icon('chart')} По дням недели</div>
         ${s.day_breakdown.map(d => `
-          <div class="stat-row"><span>${d.day}</span><span>${'🔥'.repeat(Math.min(d.count,5))} ${d.count}</span></div>`).join('')}
+          <div class="stat-row"><span>${d.day}</span><span class="stat-row-right">${d.count}</span></div>`).join('')}
       </div>`;
   } catch (e) {
-    el.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    el.innerHTML = errorState(e.message);
   }
 }
 
@@ -464,25 +584,22 @@ async function loadAdminReviews() {
   el.innerHTML = spinner();
   try {
     const reviews = await api('/admin/reviews');
-    if (!reviews.length) {
-      el.innerHTML = '<div class="empty"><div class="empty-ico">😭</div><div class="empty-tit">Отзывов пока нет</div></div>';
-      return;
-    }
+    if (!reviews.length) { el.innerHTML = emptyState('star-line', 'Отзывов пока нет'); return; }
     const total = reviews.length;
     const avg   = reviews.reduce((a, r) => a + r.stars, 0) / total;
     el.innerHTML = `
-      <div class="stat-block" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
-        <div><div class="stat-lbl">Средняя оценка</div><div class="stat-val">${avg.toFixed(1)} ⭐</div></div>
-        <div style="text-align:right"><div class="stat-lbl">Всего</div><div class="stat-val">${total}</div></div>
+      <div class="stat-grid" style="grid-template-columns:repeat(2,1fr)">
+        <div class="stat-mini"><div class="stat-val">${avg.toFixed(1)}</div><div class="stat-lbl">Средняя оценка</div></div>
+        <div class="stat-mini"><div class="stat-val">${total}</div><div class="stat-lbl">Всего отзывов</div></div>
       </div>
       ${reviews.map(r => `
         <div class="review-card">
-          <div class="review-stars">${'⭐'.repeat(r.stars)}</div>
+          <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
           <div class="review-svc">${r.service_name}</div>
-          <div class="review-meta">👤 ${r.client_name} · 📅 ${r.date}</div>
+          <div class="review-meta">${r.client_name} · ${r.date}</div>
         </div>`).join('')}`;
   } catch (e) {
-    el.innerHTML = `<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-tit">${e.message}</div></div>`;
+    el.innerHTML = errorState(e.message);
   }
 }
 

@@ -3,162 +3,211 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Салон Saxar 🌸</title>
+  <title>Студия Saxar</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css?v=20260609">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260613">
 </head>
 <body>
 
+<!-- ════ SVG-СПРАЙТ ИКОНОК ════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pin"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"/><circle cx="12" cy="11" r="2.3"/></symbol>
+  <symbol id="i-phone"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3l2 5-2 1.2a12 12 0 0 0 4.8 4.8L14 13l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-chat"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.5L3.5 20.5l1.5-4.9A8.5 8.5 0 1 1 21 11.5z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/></symbol>
+  <symbol id="i-clock"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></symbol>
+  <symbol id="i-check"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></symbol>
+  <symbol id="i-close"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-chev-r"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-arrow-l"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-home"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M5.5 10v10h13V10"/></symbol>
+  <symbol id="i-tag"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V5a2 2 0 0 1 2-2h8l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.6" cy="7.6" r="1.3"/></symbol>
+  <symbol id="i-clipboard"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="2.5"/><path d="M9 5V4a1.2 1.2 0 0 1 1.2-1.2h3.6A1.2 1.2 0 0 1 15 4v1"/><path d="M8.5 11h7M8.5 15h5"/></symbol>
+  <symbol id="i-gear"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1M18.7 18.7l-2.1-2.1M7.4 7.4 5.3 5.3"/></symbol>
+  <symbol id="i-spark"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c.5 5 2.5 7 7.5 7.5-5 .5-7 2.5-7.5 7.5-.5-5-2.5-7-7.5-7.5 5-.5 7-2.5 7.5-7.5z"/></symbol>
+  <symbol id="i-user"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="i-venus"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="5"/><path d="M12 13.5V21M8.5 18h7"/></symbol>
+  <symbol id="i-mars"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5.2"/><path d="M14.2 9.8 20 4M14.5 4H20v5.5"/></symbol>
+  <symbol id="i-folder"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h6a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-inbox"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l2.5-7.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L20 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 13h4l1.5 2.5h5L16 13h4"/></symbol>
+  <symbol id="i-alert"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5M12 16h.01"/></symbol>
+  <symbol id="i-chart"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/></symbol>
+  <symbol id="i-star-line"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></symbol>
+</svg>
+
 <div id="app">
 
-  <!-- ── ГЛАВНАЯ ── -->
+  <!-- ──────── ГЛАВНАЯ ──────── -->
   <section id="page-home" class="page active">
     <div class="hero">
-      <div class="hero-logo">🌸</div>
-      <h1 class="hero-title">Салон красоты Saxar</h1>
-      <p class="hero-subtitle">Республика Дагестан, ул. Магомеда Ярагского, 42А</p>
+      <div class="hero-mark">SAXAР</div>
+      <div class="hero-rule"><span>салон красоты</span></div>
+      <p class="hero-sub">Премиальный уход · Республика Дагестан</p>
     </div>
 
     <div class="info-list">
       <div class="info-row">
-        <span class="info-icon">📍</span>
+        <span class="info-icon"><svg><use href="#i-pin"/></svg></span>
         <div>
           <div class="info-lbl">Адрес</div>
           <div class="info-val">Республика Дагестан, ул. Магомеда Ярагского, 42А</div>
         </div>
       </div>
       <div class="info-row">
-        <span class="info-icon">📞</span>
+        <span class="info-icon"><svg><use href="#i-phone"/></svg></span>
         <div>
           <div class="info-lbl">Телефон</div>
-          <div class="info-val">+89681234567</div>
+          <div class="info-val"><a href="tel:+89681234567">+8 968 123-45-67</a></div>
         </div>
       </div>
       <div class="info-row">
-        <span class="info-icon">💬</span>
+        <span class="info-icon"><svg><use href="#i-chat"/></svg></span>
         <div>
           <div class="info-lbl">Telegram</div>
-          <div class="info-val"><a href="https://t.me/coachgnv">@coachgnv 💬</a></div>
+          <div class="info-val"><a href="https://t.me/coachgnv">@coachgnv</a></div>
         </div>
       </div>
     </div>
 
-    <button class="btn-primary mt-16" onclick="nav('book')">📅 Записаться на процедуру</button>
+    <button class="btn-primary mt-16" onclick="nav('book')"><svg><use href="#i-calendar"/></svg>Записаться на процедуру</button>
   </section>
 
-  <!-- ── УСЛУГИ ── -->
+  <!-- ──────── УСЛУГИ ──────── -->
   <section id="page-services" class="page">
-    <div class="page-header"><h2>💅 Услуги и цены</h2></div>
+    <div class="page-header">
+      <div class="page-eyebrow">Прайс-лист</div>
+      <h2>Услуги и цены</h2>
+    </div>
+    <div class="segmented hidden" id="services-gender-seg"></div>
     <div id="services-list"></div>
   </section>
 
-  <!-- ── ЗАПИСЬ ── -->
+  <!-- ──────── ЗАПИСЬ ──────── -->
   <section id="page-book" class="page">
 
-    <!-- Шаг 0 — пол -->
+    <!-- Шаг 1 — пол -->
     <div id="step-gender" class="step active">
       <div class="page-header">
-        <h2>📅 Запись</h2>
-        <p class="hint">Шаг 1 из 7 — выбери раздел</p>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Выберите раздел</h2>
+        <div class="step-progress" data-progress></div>
       </div>
       <div class="gender-btns" id="book-gender-list"></div>
     </div>
 
-    <!-- Шаг 1 — категория -->
+    <!-- Шаг 2 — категория -->
     <div id="step-category" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('gender')">← Назад</button>
-        <h2>📁 Категория</h2>
-        <p class="hint">Шаг 2 из 7 — выбери категорию</p>
+        <button class="back-btn" onclick="backFromCategory()"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Категория</h2>
+        <div class="step-progress" data-progress></div>
       </div>
       <div id="book-category-list"></div>
     </div>
 
-    <!-- Шаг 2 — услуга -->
+    <!-- Шаг 3 — услуга -->
     <div id="step-service" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('category')">← Назад</button>
-        <h2>✨ Услуга</h2>
-        <p class="hint">Шаг 3 из 7 — выбери услугу</p>
+        <button class="back-btn" onclick="goStep('category')"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Услуга</h2>
+        <div class="step-progress" data-progress></div>
       </div>
       <div id="book-service-list"></div>
     </div>
 
-    <!-- Шаг 3 — дата -->
+    <!-- Шаг 4 — дата -->
     <div id="step-date" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('service')">← Назад</button>
-        <h2>📅 Выбери дату</h2>
-        <p class="hint">Шаг 4 из 7</p>
+        <button class="back-btn" onclick="goStep('service')"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Выберите дату</h2>
+        <div class="step-progress" data-progress></div>
       </div>
       <div id="dates-list"></div>
     </div>
 
-    <!-- Шаг 4 — время -->
+    <!-- Шаг 5 — время -->
     <div id="step-time" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('date')">← Назад</button>
-        <h2>⏰ Выбери время</h2>
-        <p class="hint">Шаг 5 из 7</p>
+        <button class="back-btn" onclick="goStep('date')"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Выберите время</h2>
+        <div class="step-progress" data-progress></div>
       </div>
-      <div class="legend"><span>✓ свободно</span><span>✗ занято</span></div>
+      <div class="legend"><span><i class="lg-dot lg-free"></i> свободно</span><span><i class="lg-dot lg-busy"></i> занято</span></div>
       <div id="times-grid" class="times-grid"></div>
     </div>
 
-    <!-- Шаг 5 — имя -->
+    <!-- Шаг 6 — имя -->
     <div id="step-name" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('time')">← Назад</button>
-        <h2>👤 Ваше имя</h2>
-        <p class="hint">Шаг 6 из 7</p>
+        <button class="back-btn" onclick="goStep('time')"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Ваше имя</h2>
+        <div class="step-progress" data-progress></div>
       </div>
+      <div class="field-label">Как к вам обращаться</div>
       <input id="inp-name" class="form-input" type="text" placeholder="Введите имя">
-      <button class="btn-primary mt-12" onclick="submitName()">Далее →</button>
+      <button class="btn-primary mt-12" onclick="submitName()">Продолжить<svg><use href="#i-chev-r"/></svg></button>
     </div>
 
-    <!-- Шаг 6 — телефон -->
+    <!-- Шаг 7 — телефон -->
     <div id="step-phone" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('name')">← Назад</button>
-        <h2>📱 Номер телефона</h2>
-        <p class="hint">Шаг 7 из 7</p>
+        <button class="back-btn" onclick="goStep('name')"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow" data-step></div>
+        <h2>Номер телефона</h2>
+        <div class="step-progress" data-progress></div>
       </div>
+      <div class="field-label">Для подтверждения записи</div>
       <input id="inp-phone" class="form-input" type="tel" placeholder="+7 (999) 123-45-67">
-      <button class="btn-primary mt-12" onclick="submitPhone()">Проверить запись →</button>
+      <button class="btn-primary mt-12" onclick="submitPhone()">Проверить запись<svg><use href="#i-chev-r"/></svg></button>
     </div>
 
-    <!-- Шаг 7 — подтверждение -->
+    <!-- Подтверждение -->
     <div id="step-confirm" class="step">
       <div class="page-header">
-        <button class="back-btn" onclick="goStep('phone')">← Назад</button>
-        <h2>📋 Подтверждение</h2>
+        <button class="back-btn" onclick="goStep('phone')"><svg><use href="#i-arrow-l"/></svg>Назад</button>
+        <div class="page-eyebrow">Почти готово</div>
+        <h2>Подтверждение</h2>
       </div>
       <div id="confirm-card" class="info-card-big"></div>
-      <button class="btn-primary mt-16" onclick="confirmBooking()">✓ Подтвердить запись</button>
+      <button class="btn-primary mt-16" onclick="confirmBooking()"><svg><use href="#i-check"/></svg>Подтвердить запись</button>
       <button class="btn-secondary mt-8" onclick="nav('home')">Отмена</button>
     </div>
 
     <!-- Успех -->
     <div id="step-success" class="step">
       <div class="success-wrap">
-        <div class="success-emoji">🎉</div>
-        <h2 class="success-title">Запись подтверждена!</h2>
+        <div class="success-badge"><svg><use href="#i-check"/></svg></div>
+        <h2 class="success-title">Запись подтверждена</h2>
         <div id="success-card" class="info-card-big"></div>
-        <button class="btn-primary mt-16" onclick="nav('home')">🏠 На главную</button>
+        <button class="btn-primary mt-16" onclick="nav('home')"><svg><use href="#i-home"/></svg>На главную</button>
       </div>
     </div>
 
   </section>
 
-  <!-- ── МОИ ЗАПИСИ ── -->
+  <!-- ──────── МОИ ЗАПИСИ ──────── -->
   <section id="page-mybookings" class="page">
-    <div class="page-header"><h2>📋 Мои записи</h2></div>
+    <div class="page-header">
+      <div class="page-eyebrow">Личный кабинет</div>
+      <h2>Мои записи</h2>
+    </div>
     <div id="my-bookings-list"></div>
   </section>
 
-  <!-- ── АДМИНИСТРАТОР ── -->
+  <!-- ──────── АДМИНИСТРАТОР ──────── -->
   <section id="page-admin" class="page">
-    <div class="page-header"><h2>⚙️ Администратор</h2></div>
+    <div class="page-header">
+      <div class="page-eyebrow">Панель управления</div>
+      <h2>Администратор</h2>
+    </div>
     <div class="tab-bar">
       <button class="tab active" onclick="showTab('bookings')">Записи</button>
       <button class="tab" onclick="showTab('stats')">Статистика</button>
@@ -171,18 +220,18 @@
 
 </div>
 
-<!-- ── НИЖНЯЯ НАВИГАЦИЯ ── -->
+<!-- ──────── НИЖНЯЯ НАВИГАЦИЯ ──────── -->
 <nav class="bottom-nav">
-  <button class="nav-btn active"           data-page="home"       onclick="nav('home')">       <span class="ni">🏠</span><span class="nl">Главная</span>   </button>
-  <button class="nav-btn"                  data-page="services"   onclick="nav('services')">   <span class="ni">💅</span><span class="nl">Услуги</span>    </button>
-  <button class="nav-btn nav-cta"          data-page="book"       onclick="nav('book')">       <span class="ni">🌸</span><span class="nl">Записаться</span></button>
-  <button class="nav-btn"                  data-page="mybookings" onclick="nav('mybookings')"> <span class="ni">📋</span><span class="nl">Мои записи</span></button>
-  <button class="nav-btn nav-admin hidden" data-page="admin"      onclick="nav('admin')">      <span class="ni">⚙️</span><span class="nl">Админ</span>    </button>
+  <button class="nav-btn active"           data-page="home"       onclick="nav('home')"><span class="ni"><svg><use href="#i-home"/></svg></span><span class="nl">Главная</span></button>
+  <button class="nav-btn"                  data-page="services"   onclick="nav('services')"><span class="ni"><svg><use href="#i-tag"/></svg></span><span class="nl">Услуги</span></button>
+  <button class="nav-btn nav-cta"          data-page="book"       onclick="nav('book')"><span class="ni"><svg><use href="#i-spark"/></svg></span><span class="nl">Записаться</span></button>
+  <button class="nav-btn"                  data-page="mybookings" onclick="nav('mybookings')"><span class="ni"><svg><use href="#i-clipboard"/></svg></span><span class="nl">Мои записи</span></button>
+  <button class="nav-btn nav-admin hidden" data-page="admin"      onclick="nav('admin')"><span class="ni"><svg><use href="#i-gear"/></svg></span><span class="nl">Админ</span></button>
 </nav>
 
 <div id="loader" class="loader hidden"><div class="spinner"></div></div>
 <div id="toast" class="toast hidden"></div>
 
-<script src="app.js?v=20260609"></script>
+<script src="app.js?v=20260613"></script>
 </body>
 </html>

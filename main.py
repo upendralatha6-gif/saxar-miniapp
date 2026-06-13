@@ -387,9 +387,10 @@ SERVICES = {
 AVAILABLE_TIMES = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
 
 SALON_INFO = {
-    "name": "Салон красоты Sахар",
+    "name": "SAXAР",
+    "tagline": "салон красоты",
     "address": "Республика Дагестан, ул. Магомеда Ярагского, 42А",
-    "phone": "+89681234567",
+    "phone": "+8 968 123-45-67",
     "admin": "@coachgnv",
 }
 
@@ -508,23 +509,28 @@ async def api_create_booking(
     if client_chat_id:
         await send_telegram_message(
             client_chat_id,
-            f"🎉 *Запись подтверждена!*\n\n"
-            f"{service['name']} — *{service['price']}*\n"
-            f"📅 Дата: *{body.date}* в *{body.time}*\n"
-            f"👤 Имя: *{body.client_name}*\n"
-            f"📱 Телефон: *{body.phone}*\n\n"
-            f"📍 Ждём вас по адресу:\n{SALON_INFO['address']}\n\n"
-            f"Если нужно перенести — напишите нам: {SALON_INFO['admin']} 💖"
+            "✦  *Запись подтверждена*\n"
+            "━━━━━━━━━━━━━━━\n\n"
+            f"Услуга:  *{service['name']}*\n"
+            f"Стоимость:  *{service['price']}*\n"
+            f"Когда:  *{body.date}* в *{body.time}*\n"
+            f"Имя:  *{body.client_name}*\n"
+            f"Телефон:  *{body.phone}*\n\n"
+            f"📍  Ждём вас по адресу:\n{SALON_INFO['address']}\n\n"
+            f"Нужно перенести? Напишите нам: {SALON_INFO['admin']}\n\n"
+            "До встречи в SAXAР."
         )
 
     # Уведомление администратору
     await send_telegram_message(
         ADMIN_CHAT_ID,
-        f"🔔 *Новая запись через Mini App!*\n\n"
-        f"{service['name']} — *{service['price']}*\n"
-        f"📅 Дата: *{body.date}* в *{body.time}*\n"
-        f"👤 Клиент: *{body.client_name}*\n"
-        f"📱 Телефон: *{body.phone}*"
+        "🔔  *Новая запись через приложение*\n"
+        "━━━━━━━━━━━━━━━\n\n"
+        f"Услуга:  *{service['name']}*\n"
+        f"Стоимость:  *{service['price']}*\n"
+        f"Когда:  *{body.date}* в *{body.time}*\n"
+        f"Клиент:  *{body.client_name}*\n"
+        f"Телефон:  *{body.phone}*"
     )
 
     return {"id": booking_id, "status": "confirmed"}
