@@ -221,7 +221,7 @@ function goStep(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Пересчитывает «шаг N из M» и прогресс-точки с учётом пропуска выбора пола
+// Пересчитывает крупный номер шага «01 / 07» и прогресс-сегменты с учётом пропуска выбора пола
 function updateStepMeta(name) {
   const seq = getGenders().length > 1 ? BOOK_STEPS : BOOK_STEPS.filter(s => s !== 'gender');
   const idx = seq.indexOf(name);
@@ -229,7 +229,8 @@ function updateStepMeta(name) {
   const stepEl = document.getElementById(`step-${name}`);
   const eb = stepEl?.querySelector('[data-step]');
   const pr = stepEl?.querySelector('[data-progress]');
-  if (eb) eb.textContent = `Запись · шаг ${idx + 1} из ${seq.length}`;
+  const pad = n => String(n).padStart(2, '0');
+  if (eb) eb.innerHTML = `<span class="step-big">${pad(idx + 1)}</span><span class="step-of">/ ${pad(seq.length)}</span><span class="step-word">запись</span>`;
   if (pr) pr.innerHTML = seq.map((_, i) => `<i class="sp-dot ${i <= idx ? 'done' : ''}"></i>`).join('');
 }
 
