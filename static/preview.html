@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SAXAР — превью дизайна</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=20260613">
+  <!-- ════ ЗАГЛУШКИ ДЛЯ ОФФЛАЙН-ПРЕВЬЮ (Telegram + API) ════ -->
+  <script>
+    // Заглушка Telegram WebApp — initData пустой, чтобы показать вкладку «Админ»
+    window.Telegram = { WebApp: {
+      ready(){}, expand(){},
+      initData: '',
+      initDataUnsafe: { user: { id: 1, first_name: 'Амина', last_name: '' } },
+      HapticFeedback: { selectionChanged(){}, notificationOccurred(){} },
+      showConfirm(msg, cb){ cb(window.confirm(msg)); },
+    }};
+
+    // Мок-данные
+    const MOCK_SERVICES = [
+      { "id": "w_dep_pudra", "name": "Пудра энзимная", "price": "60 руб", "duration": 10, "category": "🪒 Депиляция (доп.)", "gender": "female"},
+      { "id": "w_dep_maska", "name": "Противовоспалительная маска", "price": "60 руб", "duration": 10, "category": "🪒 Депиляция (доп.)", "gender": "female"},
+      { "id": "w_dep_gel", "name": "Обезболивающий гель", "price": "650 руб", "duration": 10, "category": "🪒 Депиляция (доп.)", "gender": "female"},
+      { "id": "w_vosk_telo", "name": "Всё тело (подмышки+бикини+ноги полностью)", "price": "2100 руб", "duration": 90, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_podm", "name": "Подмышечные впадины", "price": "300 руб", "duration": 20, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_bikini_tr", "name": "Бикини трусики", "price": "400 руб", "duration": 20, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_bikini_gl", "name": "Бикини глубокое", "price": "700 руб", "duration": 30, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_nogi_do", "name": "Ноги до колен", "price": "600 руб", "duration": 30, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_nogi_vyshe", "name": "Ноги выше колен", "price": "600 руб", "duration": 30, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_nogi_pol", "name": "Ноги полностью", "price": "1100 руб", "duration": 60, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_ruki_do", "name": "Руки до локтя", "price": "350 руб", "duration": 20, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_ruki_34", "name": "Руки 3/4", "price": "600 руб", "duration": 30, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_ruki_pol", "name": "Руки полностью", "price": "700 руб", "duration": 40, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_zona", "name": "Ягодицы/Живот/Спина/Грудь (1 зона)", "price": "400 руб", "duration": 20, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_vosk_liniya", "name": "Линия живота/колени/плечи/кисти/пальцы/ареолы", "price": "100 руб", "duration": 10, "category": "🪒 Восковая депиляция", "gender": "female"},
+      { "id": "w_polvosk_telo", "name": "Всё тело (подмышки+бикини+ноги полностью)", "price": "3900 руб", "duration": 120, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_lico_zona", "name": "Область лица", "price": "250 руб", "duration": 15, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_lico_pol", "name": "Лицо полностью", "price": "950 руб", "duration": 30, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_podm", "name": "Подмышечные впадины", "price": "400 руб", "duration": 20, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_bikini_tr", "name": "Бикини трусики", "price": "600 руб", "duration": 25, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_bikini_gl", "name": "Бикини глубокое", "price": "1200 руб", "duration": 40, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_nogi_do", "name": "Ноги до колен", "price": "1100 руб", "duration": 40, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_nogi_vyshe", "name": "Ноги выше колен", "price": "1100 руб", "duration": 40, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_nogi_pol", "name": "Ноги полностью", "price": "2200 руб", "duration": 60, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_ruki_do", "name": "Руки до локтя", "price": "550 руб", "duration": 25, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_ruki_pol", "name": "Руки полностью", "price": "1100 руб", "duration": 50, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_zona", "name": "Ягодицы/Живот/Спина/Грудь (1 зона)", "price": "600 руб", "duration": 20, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_liniya", "name": "Линия живота/колени/плечи (1 зона)", "price": "250 руб", "duration": 10, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_polvosk_nos", "name": "Нос/Уши (1 зона)", "price": "350 руб", "duration": 10, "category": "🪒 Полимерный воск", "gender": "female"},
+      { "id": "w_skins_telo", "name": "Всё тело (подмышки+бикини+ноги полностью)", "price": "6300 руб", "duration": 120, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_lico", "name": "Область лица", "price": "450 руб", "duration": 15, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_podm", "name": "Подмышечные впадины", "price": "600 руб", "duration": 20, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_bikini_tr", "name": "Бикини трусики", "price": "850 руб", "duration": 25, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_bikini_gl", "name": "Бикини глубокое", "price": "1800 руб", "duration": 40, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_nogi_do", "name": "Ноги до колен", "price": "1950 руб", "duration": 50, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_nogi_vyshe", "name": "Ноги выше колен", "price": "1950 руб", "duration": 50, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_nogi_pol", "name": "Ноги полностью", "price": "3900 руб", "duration": 90, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_ruki_do", "name": "Руки до локтя", "price": "950 руб", "duration": 30, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_ruki_pol", "name": "Руки полностью", "price": "1700 руб", "duration": 50, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_zona", "name": "Ягодицы/Живот/Спина/Грудь (1 зона)", "price": "950 руб", "duration": 25, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_nos", "name": "Нос/Уши (1 зона)", "price": "350 руб", "duration": 10, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_skins_kisti", "name": "Кисти/Пальцы/Ареолы/Линия живота", "price": "400 руб", "duration": 10, "category": "🪒 SKIN'S POSTAVKA #1", "gender": "female"},
+      { "id": "w_gel_bikini_podm", "name": "Бикини + подмышечные впадины", "price": "1950 руб", "duration": 50, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_lico_zona", "name": "Область лица", "price": "300 руб", "duration": 15, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_lico_pol", "name": "Лицо полностью", "price": "1100 руб", "duration": 30, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_podm", "name": "Подмышечные впадины", "price": "500 руб", "duration": 20, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_bikini_tr", "name": "Бикини трусики", "price": "850 руб", "duration": 25, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_bikini_gl", "name": "Бикини глубокое", "price": "1450 руб", "duration": 40, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_zona", "name": "Ягодицы/Живот/Спина/Грудь (1 зона)", "price": "750 руб", "duration": 25, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_kisti", "name": "Кисти/Пальцы/Ареолы/Линия живота", "price": "300 руб", "duration": 10, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_gel_nos", "name": "Нос/Уши (1 зона)", "price": "400 руб", "duration": 10, "category": "🪒 Гелевая депиляция", "gender": "female"},
+      { "id": "w_sugar_telo", "name": "Всё тело (подмышки+бикини+ноги полностью)", "price": "2550 руб", "duration": 120, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_lico_zona", "name": "Область лица", "price": "250 руб", "duration": 15, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_lico_pol", "name": "Лицо полностью", "price": "700 руб", "duration": 30, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_podm", "name": "Подмышечные впадины", "price": "300 руб", "duration": 20, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_bikini_tr", "name": "Бикини трусики", "price": "400 руб", "duration": 25, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_bikini_gl", "name": "Бикини глубокое", "price": "1000 руб", "duration": 40, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_nogi_do", "name": "Ноги до колен", "price": "650 руб", "duration": 30, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_nogi_vyshe", "name": "Ноги выше колен", "price": "650 руб", "duration": 30, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_nogi_pol", "name": "Ноги полностью", "price": "1300 руб", "duration": 60, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_ruki_do", "name": "Руки до локтя", "price": "350 руб", "duration": 20, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_ruki_pol", "name": "Руки полностью", "price": "650 руб", "duration": 40, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_zona", "name": "Ягодицы/Живот/Спина/Грудь (1 зона)", "price": "500 руб", "duration": 20, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_sugar_kisti", "name": "Кисти/Пальцы/Ареолы/Линия живота", "price": "150 руб", "duration": 10, "category": "🍬 Шугаринг", "gender": "female"},
+      { "id": "w_aqua_lico", "name": "Область лица", "price": "300 руб", "duration": 15, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_lico_pol", "name": "Лицо полностью", "price": "800 руб", "duration": 30, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_podm", "name": "Подмышечные впадины", "price": "400 руб", "duration": 20, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_bikini_tr", "name": "Бикини трусики", "price": "700 руб", "duration": 25, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_bikini_gl", "name": "Бикини глубокое", "price": "1250 руб", "duration": 40, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_nogi_do", "name": "Ноги до колен", "price": "700 руб", "duration": 30, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_nogi_vyshe", "name": "Ноги выше колен", "price": "800 руб", "duration": 30, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_nogi_pol", "name": "Ноги полностью", "price": "1400 руб", "duration": 60, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_plechi", "name": "Плечи", "price": "300 руб", "duration": 15, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_poyasnica", "name": "Поясница", "price": "350 руб", "duration": 15, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_spina", "name": "Спина полностью", "price": "850 руб", "duration": 40, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_zona", "name": "Ягодицы/Живот/Грудь (1 зона)", "price": "750 руб", "duration": 25, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_aqua_kisti", "name": "Кисти/Пальцы/Ареолы (1 зона)", "price": "300 руб", "duration": 10, "category": "💧 Aqua шугаринг", "gender": "female"},
+      { "id": "w_lazer_podm_bikini", "name": "Подмышки + бикини глубокое", "price": "2000 руб", "duration": 60, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_podm_bikini_nogi_do", "name": "Подмышки + бикини + ноги до/выше колен", "price": "4000 руб", "duration": 90, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_podm_bikini_nogi_pol", "name": "Подмышки + бикини + ноги полностью", "price": "6000 руб", "duration": 120, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_bikini_nogi_do", "name": "Бикини + ноги до/выше колен", "price": "3400 руб", "duration": 80, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_bikini_nogi_pol", "name": "Бикини + ноги полностью", "price": "5400 руб", "duration": 100, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_lico", "name": "Область лица", "price": "500 руб", "duration": 20, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_podm", "name": "Подмышечные впадины", "price": "600 руб", "duration": 20, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_bikini_gl", "name": "Бикини глубокое", "price": "1400 руб", "duration": 40, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_bikini_tr", "name": "Бикини трусики", "price": "1000 руб", "duration": 30, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_nogi_do", "name": "Ноги до колен", "price": "2000 руб", "duration": 50, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_nogi_vyshe", "name": "Ноги выше колен", "price": "2000 руб", "duration": 50, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_nogi_pol", "name": "Ноги полностью", "price": "4000 руб", "duration": 90, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_ruki_do", "name": "Руки до локтя", "price": "1500 руб", "duration": 40, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_ruki_pol", "name": "Руки полностью", "price": "3000 руб", "duration": 70, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_lazer_zona", "name": "Ягодицы/Живот/Спина/Грудь (1 зона)", "price": "1100 руб", "duration": 30, "category": "⚡ Лазерная эпиляция", "gender": "female"},
+      { "id": "w_geling_lico", "name": "Область лица", "price": "200 руб", "duration": 15, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_podm", "name": "Подмышечные впадины", "price": "500 руб", "duration": 20, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_bikini_tr", "name": "Бикини трусики", "price": "350 руб", "duration": 20, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_bikini_gl", "name": "Бикини глубокое", "price": "700 руб", "duration": 35, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_nogi_do", "name": "Ноги до колен", "price": "1200 руб", "duration": 40, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_nogi_vyshe", "name": "Ноги выше колен", "price": "1200 руб", "duration": 40, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_nogi_pol", "name": "Ноги полностью", "price": "2400 руб", "duration": 75, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_ruki_do", "name": "Руки до локтя", "price": "700 руб", "duration": 30, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_liniya", "name": "Линия живота", "price": "200 руб", "duration": 10, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_geling_zona", "name": "Спина/Живот/Плечи/Ягодицы (1 зона)", "price": "700 руб", "duration": 25, "category": "🌿 Geling", "gender": "female"},
+      { "id": "w_man_klass", "name": "Маникюр на выбор (классический/комбинированный/аппаратный)", "price": "1000 руб", "duration": 60, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_kompl_gel", "name": "Комплекс: маникюр + снятие + покрытие гель-лак", "price": "1750 руб", "duration": 90, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_kompl_spa", "name": "Комплекс: маникюр + снятие + покрытие + СПА уход + масло + массаж", "price": "2500 руб", "duration": 120, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_detsky", "name": "Маникюр детский (до 7 лет)", "price": "400 руб", "duration": 30, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_yapon", "name": "Маникюр японский", "price": "1400 руб", "duration": 75, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_parafin", "name": "Парафинотерапия рук", "price": "400 руб", "duration": 20, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_spa", "name": "SPA-уход для рук", "price": "450 руб", "duration": 25, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_massage", "name": "Массаж кистей 15 минут", "price": "400 руб", "duration": 15, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_man_polirovka", "name": "Полировка ногтей", "price": "300 руб", "duration": 15, "category": "💅 Маникюр", "gender": "female"},
+      { "id": "w_pokr_lak", "name": "Лак", "price": "550 руб", "duration": 20, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_lak_halal", "name": "Лак HALAL", "price": "650 руб", "duration": 20, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_gel", "name": "Гель-лак", "price": "750 руб", "duration": 30, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_gel_luxio", "name": "Гель-лак LUXIO", "price": "1200 руб", "duration": 30, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_inki", "name": "Экоглянцевание INKI (HALAL)", "price": "850 руб", "duration": 30, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_yapon_vtirka", "name": "Японская втирка", "price": "600 руб", "duration": 20, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_snyatie_s", "name": "Снятие гель-лака с последующим покрытием", "price": "250 руб", "duration": 20, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_snyatie_bez", "name": "Снятие гель-лака без покрытия", "price": "400 руб", "duration": 20, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_hna", "name": "Покрытие хной", "price": "550 руб", "duration": 25, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_tochki_hna", "name": "Точки хной", "price": "250 руб", "duration": 15, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_pokr_snyatie_gel", "name": "Снятие укрепления гелем", "price": "400 руб", "duration": 20, "category": "💅 Покрытие", "gender": "female"},
+      { "id": "w_nar_ukrp_gel", "name": "Укрепление гелем под гель-лак", "price": "650 руб", "duration": 40, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_ukrp_kamuf", "name": "Укрепление камуфлирующим гелем", "price": "1500 руб", "duration": 60, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_noghi", "name": "Наращивание ногтей", "price": "2350 руб", "duration": 120, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_snyatie", "name": "Снятие нарощенных ногтей", "price": "600 руб", "duration": 30, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_korrekciya", "name": "Коррекция ногтей", "price": "70% от стоимости", "duration": 90, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_french", "name": "Френч", "price": "400 руб", "duration": 20, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_lunki", "name": "Лунки/Втирка", "price": "400 руб", "duration": 20, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_slider", "name": "Слайдер/Втирка (1 ноготь)", "price": "60 руб", "duration": 5, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_nar_rospis", "name": "Художественная роспись (1 ноготь)", "price": "300 руб", "duration": 10, "category": "💅 Наращивание и дизайн", "gender": "female"},
+      { "id": "w_ped_palchiki", "name": "Обработка пальчиков", "price": "650 руб", "duration": 30, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_stopy", "name": "Обработка стоп", "price": "750 руб", "duration": 30, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_klass", "name": "Педикюр на выбор (классический/комбинированный/аппаратный)", "price": "1200 руб", "duration": 60, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_kompl_gel", "name": "Комплекс: педикюр + снятие + покрытие гель-лак", "price": "1950 руб", "duration": 90, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_kompl_spa", "name": "Комплекс: педикюр + снятие + покрытие + СПА уход + масло + массаж", "price": "2750 руб", "duration": 120, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_yapon", "name": "Педикюр японский", "price": "1500 руб", "duration": 75, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_smart", "name": "SMART-педикюр", "price": "1800 руб", "duration": 90, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_golden", "name": "Педикюр Golden Trace", "price": "2200 руб", "duration": 90, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_parafin", "name": "Парафинотерапия ног", "price": "450 руб", "duration": 20, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_spa", "name": "SPA-уход для ног", "price": "500 руб", "duration": 25, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_ped_massage", "name": "Массаж стоп 15 минут", "price": "500 руб", "duration": 15, "category": "🦶 Педикюр", "gender": "female"},
+      { "id": "w_brov_oform_kraska", "name": "Оформление бровей пинцет/воск + окрашивание краской", "price": "1200 руб", "duration": 45, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_oform_hna", "name": "Оформление бровей пинцет/воск + окрашивание хной", "price": "1200 руб", "duration": 45, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_oform", "name": "Оформление пинцетом/воском", "price": "700 руб", "duration": 30, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_kraska", "name": "Окрашивание бровей краской", "price": "700 руб", "duration": 20, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_hna", "name": "Окрашивание бровей хной", "price": "700 руб", "duration": 20, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_kompl_full", "name": "Комплекс: оформление + окрашивание + долговременная укладка + Счастье для бровей", "price": "3500 руб", "duration": 120, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_kompl_ukl", "name": "Комплекс: оформление + окрашивание + долговременная укладка", "price": "2700 руб", "duration": 90, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_kompl_oform_ukl", "name": "Комплекс: оформление бровей + долговременная укладка", "price": "2000 руб", "duration": 75, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_lamin_sigma", "name": "Ламинирование бровей SIGMA", "price": "1800 руб", "duration": 60, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_lamin_lami", "name": "Ламинирование бровей LAMI SMART", "price": "2000 руб", "duration": 60, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_velvet", "name": "Вельвет бровей", "price": "2600 руб", "duration": 75, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_schaste", "name": "Счастье для бровей", "price": "1000 руб", "duration": 30, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_brov_osvetlenie", "name": "Деликатное осветление бровей", "price": "500 руб", "duration": 20, "category": "👁 Брови", "gender": "female"},
+      { "id": "w_res_okrash", "name": "Окрашивание ресниц", "price": "800 руб", "duration": 20, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_lamin_sigma", "name": "Ламинирование ресниц SIGMA", "price": "2000 руб", "duration": 60, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_lamin_lami", "name": "Ламинирование ресниц LAMI SMART", "price": "2400 руб", "duration": 60, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_velvet", "name": "Вельвет ресниц", "price": "2700 руб", "duration": 75, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_schaste", "name": "Счастье для ресниц", "price": "1200 руб", "duration": 30, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_kompl_ukl", "name": "Комплекс: окрашивание ресниц + долговременная укладка", "price": "2500 руб", "duration": 90, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_kompl_full", "name": "Комплекс: окрашивание ресниц + долговременная укладка + Счастье для ресниц", "price": "3500 руб", "duration": 120, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_express", "name": "Экспресс-наращивание ресниц", "price": "1300 руб", "duration": 60, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_nar_1d", "name": "Наращивание ресниц 1D", "price": "1750 руб", "duration": 90, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_nar_15d", "name": "Наращивание ресниц 1.5D", "price": "2000 руб", "duration": 95, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_nar_2d", "name": "Наращивание ресниц 2D", "price": "2300 руб", "duration": 100, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_nar_3d", "name": "Наращивание ресниц 3D", "price": "2500 руб", "duration": 110, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_nar_45d", "name": "Наращивание ресниц 4/5D", "price": "3000 руб", "duration": 120, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_effekt", "name": "Эффект ресниц (мокрый/Кайли/цветные)", "price": "450 руб", "duration": 20, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_korrekciya", "name": "Коррекция ресниц", "price": "70% от стоимости", "duration": 60, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_res_snyatie", "name": "Снятие ресниц", "price": "350 руб", "duration": 20, "category": "👁 Ресницы", "gender": "female"},
+      { "id": "w_mak_express", "name": "Макияж «Экспресс»", "price": "1800 руб", "duration": 45, "category": "💄 Макияж", "gender": "female"},
+      { "id": "w_mak_dnevnoy", "name": "Дневной макияж", "price": "2800 руб", "duration": 60, "category": "💄 Макияж", "gender": "female"},
+      { "id": "w_mak_vecherny", "name": "Вечерний макияж", "price": "3700 руб", "duration": 75, "category": "💄 Макияж", "gender": "female"},
+      { "id": "w_mak_slozhny", "name": "Сложный макияж", "price": "5000 руб", "duration": 90, "category": "💄 Макияж", "gender": "female"},
+      { "id": "w_mak_puchki_express", "name": "Ресничные пучки — экспресс объём", "price": "400 руб", "duration": 20, "category": "💄 Макияж", "gender": "female"},
+      { "id": "w_mak_puchki_pol", "name": "Ресничные пучки — полный объём", "price": "600 руб", "duration": 30, "category": "💄 Макияж", "gender": "female"},
+      { "id": "w_obraz_dnevnoy", "name": "Дневной образ", "price": "3800 руб", "duration": 120, "category": "💄 Образ", "gender": "female"},
+      { "id": "w_obraz_vecherny", "name": "Вечерний образ", "price": "4500 руб", "duration": 150, "category": "💄 Образ", "gender": "female"},
+      { "id": "w_obraz_prazdnik", "name": "Праздничный образ", "price": "6000 руб", "duration": 180, "category": "💄 Образ", "gender": "female"},
+      { "id": "w_hair_striz", "name": "Стрижка женская", "price": "2000 руб", "duration": 60, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_striz_det", "name": "Стрижка детская (до 7 лет)", "price": "700 руб", "duration": 30, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_podravnivanie", "name": "Подравнивание (одним срезом, без мытья)", "price": "1000 руб", "duration": 20, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_chelka", "name": "Стрижка чёлки", "price": "700 руб", "duration": 15, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_ukladka", "name": "Укладка лёгкая", "price": "1750 руб", "duration": 45, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_mytyo", "name": "Мытьё головы (с сушкой)", "price": "1000 руб", "duration": 30, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_massage", "name": "Массаж головы 15 минут", "price": "400 руб", "duration": 15, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_pricheska", "name": "Причёска вечерняя", "price": "3000–4200 руб", "duration": 90, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_express_prich", "name": "Экспресс-причёска", "price": "2000–3000 руб", "duration": 45, "category": "✂️ Стрижка и укладка", "gender": "female"},
+      { "id": "w_hair_gollivud", "name": "Голливудские локоны", "price": "2200 руб", "duration": 60, "category": "✂️ Локоны и косы", "gender": "female"},
+      { "id": "w_hair_brashinng", "name": "Локоны на брашинг", "price": "2000 руб", "duration": 60, "category": "✂️ Локоны и косы", "gender": "female"},
+      { "id": "w_hair_kosi", "name": "Плетение кос", "price": "1500 руб", "duration": 60, "category": "✂️ Локоны и косы", "gender": "female"},
+      { "id": "w_vol_revlon_okr", "name": "Олаплекс при окрашивании", "price": "1500 руб", "duration": 20, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_uhod_golova", "name": "Уход за кожей головы / пилинг", "price": "1750 руб", "duration": 30, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_abs_k", "name": "Абсолютное счастье LEBEL — короткая", "price": "3600 руб", "duration": 60, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_abs_s", "name": "Абсолютное счастье LEBEL — средняя", "price": "5500 руб", "duration": 75, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_abs_d", "name": "Абсолютное счастье LEBEL — длинная", "price": "6500 руб", "duration": 90, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_abs_xl", "name": "Абсолютное счастье LEBEL — очень длинная", "price": "8000 руб", "duration": 105, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_pros_k", "name": "«Проснись голова» LEBEL — короткая", "price": "1750 руб", "duration": 40, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_pros_s", "name": "«Проснись голова» LEBEL — средняя", "price": "2400 руб", "duration": 50, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_pros_d", "name": "«Проснись голова» LEBEL — длинная", "price": "3000 руб", "duration": 60, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_blesk_k", "name": "Блеск и сила LEBEL — короткая", "price": "1800 руб", "duration": 40, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_blesk_s", "name": "Блеск и сила LEBEL — средняя", "price": "2600 руб", "duration": 50, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_blesk_d", "name": "Блеск и сила LEBEL — длинная", "price": "3700 руб", "duration": 60, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_matrix_express", "name": "Экспресс-уход Matrix", "price": "500 руб", "duration": 20, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_sila_k", "name": "Жизненная сила LEBEL — короткая", "price": "2100 руб", "duration": 40, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_sila_s", "name": "Жизненная сила LEBEL — средняя", "price": "2400 руб", "duration": 50, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_lebel_sila_d", "name": "Жизненная сила LEBEL — длинная", "price": "3000 руб", "duration": 60, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_nanoplas_k", "name": "Нанопластика — короткая", "price": "4000 руб", "duration": 90, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_nanoplas_s", "name": "Нанопластика — средняя", "price": "7500 руб", "duration": 110, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_nanoplas_d", "name": "Нанопластика — длинная", "price": "9000 руб", "duration": 130, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_botox_k", "name": "Ботокс волос Honma Tokio — короткая", "price": "4000 руб", "duration": 90, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_botox_s", "name": "Ботокс волос Honma Tokio — средняя", "price": "6000 руб", "duration": 110, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_botox_d", "name": "Ботокс волос Honma Tokio — длинная", "price": "11600 руб", "duration": 130, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_zavivka", "name": "Биозавивка волос (карвинг)", "price": "4800–8400 руб", "duration": 120, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_keratin_k", "name": "Кератиновое выпрямление — короткая", "price": "5000 руб", "duration": 120, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_keratin_s", "name": "Кератиновое выпрямление — средняя", "price": "7550 руб", "duration": 150, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_keratin_d", "name": "Кератиновое выпрямление — длинная", "price": "13600 руб", "duration": 180, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_limba_total", "name": "Тотальная реконструкция волос LIMBA", "price": "5900/8000 руб", "duration": 120, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_limba_pitanie", "name": "Экспресс питание LIMBA", "price": "2450 руб", "duration": 40, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_limba_uvl", "name": "Экспресс увлажнение LIMBA", "price": "2000 руб", "duration": 40, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_limba_detox", "name": "Детокс и увлажнение в городских условиях LIMBA", "price": "3000 руб", "duration": 50, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_limba_uplom", "name": "Уплотнение и защита тонких волос LIMBA", "price": "3000 руб", "duration": 50, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_vol_limba_shelk", "name": "Шелковая терапия для жестких волос LIMBA", "price": "3000 руб", "duration": 50, "category": "💆 Лечение волос", "gender": "female"},
+      { "id": "w_okr_1ton_k", "name": "Окрашивание/тонирование в 1 тон — короткая", "price": "3800/5400 руб", "duration": 90, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_1ton_s", "name": "Окрашивание/тонирование в 1 тон — средняя", "price": "4900/7000 руб", "duration": 100, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_1ton_d", "name": "Окрашивание/тонирование в 1 тон — длинная", "price": "5900/8300 руб", "duration": 110, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_slozh_k", "name": "Сложное окрашивание — короткая", "price": "5450/6700 руб", "duration": 120, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_slozh_s", "name": "Сложное окрашивание — средняя", "price": "8000/9900 руб", "duration": 150, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_slozh_d", "name": "Сложное окрашивание — длинная", "price": "11900/13200 руб", "duration": 180, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_korni_ton", "name": "Окрашивание корней + тонирование", "price": "3500 руб", "duration": 60, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_airtouch_k", "name": "Airtouch — короткая", "price": "7500/8600 руб", "duration": 150, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_airtouch_s", "name": "Airtouch — средняя", "price": "9800/11600 руб", "duration": 180, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_airtouch_d", "name": "Airtouch — длинная", "price": "13200/15900 руб", "duration": 210, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_melir_k", "name": "Мелирование без тонирования — короткая", "price": "4300/5600 руб", "duration": 90, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_melir_s", "name": "Мелирование без тонирования — средняя", "price": "5400/6600 руб", "duration": 100, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_melir_d", "name": "Мелирование без тонирования — длинная", "price": "6900/8000 руб", "duration": 110, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_total_blonde_k", "name": "Total Blonde — короткая", "price": "7500 руб", "duration": 150, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_total_blonde_s", "name": "Total Blonde — средняя", "price": "9300 руб", "duration": 180, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_total_blonde_d", "name": "Total Blonde — длинная", "price": "14800 руб", "duration": 210, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_kontur_2pradi", "name": "Контуринг 2 пряди", "price": "2000/2900 руб", "duration": 60, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_konturing", "name": "Контуринг по всем волосам", "price": "2000/4000 руб", "duration": 90, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_korni", "name": "Окрашивание/тонирование корней", "price": "2850/4400 руб", "duration": 60, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_smyvka_k", "name": "Смывка Estel — короткая", "price": "3800 руб", "duration": 60, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_smyvka_s", "name": "Смывка Estel — средняя", "price": "4900 руб", "duration": 75, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_okr_smyvka_d", "name": "Смывка Estel — длинная", "price": "5900 руб", "duration": 90, "category": "🎨 Окрашивание", "gender": "female"},
+      { "id": "w_mass_antitsel_30", "name": "Антицеллюлитный комплекс 3 зоны (бёдра, бока, ягодицы) 30 мин", "price": "1600 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_antitsel_60", "name": "Антицеллюлитный комплекс 3 зоны (бёдра, бока, ягодицы) 60 мин", "price": "2500 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_antitsel_5zon", "name": "Антицеллюлитный комплекс 5 зон (живот, бёдра, бока, ягодицы, руки) 90 мин", "price": "3200 руб", "duration": 90, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_limfodren_60", "name": "Лимфодренажный массаж тело 60 мин", "price": "2500 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_limfodren_90", "name": "Лимфодренажный массаж тело 90 мин", "price": "3200 руб", "duration": 90, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spina_30", "name": "Массаж спины 30 мин", "price": "1000 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_sheya_30", "name": "Шейно-воротниковая зона 30 мин", "price": "750 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_golova_30", "name": "Голова 30 мин", "price": "750 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_nogi_30", "name": "Ноги 30 мин", "price": "800 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_ruki_30", "name": "Руки 30 мин", "price": "750 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_klass_60", "name": "Классический общий массаж 60 мин", "price": "2300 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_klass_90", "name": "Классический общий массаж 90 мин", "price": "2800 руб", "duration": 90, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_relax_60", "name": "Расслабляющий массаж 60 мин", "price": "2500 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_relax_90", "name": "Расслабляющий массаж 90 мин", "price": "3200 руб", "duration": 90, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spa_dop", "name": "Доп. массаж в завершении СПА-процедуры 20 мин", "price": "750 руб", "duration": 20, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_stoun", "name": "Стоун-терапия, массаж горячими камнями", "price": "2500 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_obert_antitsel", "name": "Горячее антицеллюлитное обертывание", "price": "1300 руб", "duration": 40, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_bandaz", "name": "Бандажное бинтование", "price": "1900 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spa_kontury", "name": "СПА-уход «Контуры тела»", "price": "2500 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spa_vodorosl", "name": "СПА-уход «Водорослевое обертывание»", "price": "3200 руб", "duration": 75, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spa_antitsel", "name": "СПА-уход «Антицеллюлитный»", "price": "3200 руб", "duration": 75, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spa_bandaz", "name": "СПА-уход бандажное бинтование «Контуры тела»", "price": "3500 руб", "duration": 90, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_spa_med", "name": "СПА-уход «Медовое наслаждение»", "price": "3200 руб", "duration": 75, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_skrab", "name": "Скрабирование", "price": "1100 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_inhibitor_30", "name": "Массаж на ингибиторе жира, всё тело 30 мин", "price": "3500 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_inhibitor_60", "name": "Массаж на ингибиторе жира, всё тело 60 мин", "price": "4200 руб", "duration": 60, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_inhibitor_yag", "name": "Массаж на ингибиторе жира (ягодицы, ножки) 30 мин", "price": "2000 руб", "duration": 30, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_megaskulptor", "name": "Липомоделирующий массаж МЕГАСКУЛЬПТОР 45 мин", "price": "2750 руб", "duration": 45, "category": "💆 Массаж тела", "gender": "female"},
+      { "id": "w_mass_lico_60", "name": "Массаж лицо, шея, декольте 60 мин", "price": "2000 руб", "duration": 60, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_lico_30", "name": "Массаж лицо, шея, декольте 30 мин", "price": "1300 руб", "duration": 30, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_bukal_60", "name": "Буккальный массаж хиропластический 60 мин", "price": "2800 руб", "duration": 60, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_bukal_90", "name": "Буккальный массаж хиропластический 90 мин", "price": "3500 руб", "duration": 90, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_facefit_60", "name": "Массаж лица FACE FIT (миолифтинговый) 60 мин", "price": "2800 руб", "duration": 60, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_facefit_90", "name": "Массаж лица FACE FIT (миолифтинговый) 90 мин", "price": "3500 руб", "duration": 90, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_ispanskiy_60", "name": "Испанский массаж лицо, декольте 60 мин", "price": "2800 руб", "duration": 60, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_ispanskiy_90", "name": "Испанский массаж реанимирующий (гемолимфодренажный) 90 мин", "price": "3500 руб", "duration": 90, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_yapon_60", "name": "Японский массаж лица (Асахи, Зоган) 60 мин", "price": "2800 руб", "duration": 60, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_yapon_90", "name": "Японский массаж лица (Асахи, Зоган) 90 мин", "price": "3500 руб", "duration": 90, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_spetsialiiz_15", "name": "Специализированные массажные техники 15 мин", "price": "750 руб", "duration": 15, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_mass_avtorskiy", "name": "Авторский массаж по индивидуальным показаниям 60 мин", "price": "3000 руб", "duration": 60, "category": "💆 Массаж лица", "gender": "female"},
+      { "id": "w_kosm_ultrazvuk", "name": "Ультразвуковая чистка лица", "price": "2400 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_atravmat", "name": "Атравматическая чистка лица", "price": "2500 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_kombi_chistka", "name": "Комбинированная чистка лица", "price": "2600 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_apparat_chistka", "name": "Аппаратная чистка лица", "price": "3500 руб", "duration": 75, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_karbo", "name": "Карбокситерапия", "price": "2000 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_vodorosl_maska", "name": "Водорослевая маска", "price": "750 руб", "duration": 20, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_uvl_maska", "name": "Увлажняющая маска", "price": "750 руб", "duration": 20, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_programmy", "name": "Программы ухода", "price": "1500/3500 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_rf", "name": "RF-лифтинг", "price": "1500 руб", "duration": 30, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_krio", "name": "Криотерапия/Хромотерапия/OXYJET/Фонофорез", "price": "1000/1500 руб", "duration": 30, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_mikrotoki", "name": "Микротоки (лицо / лицо+шея / лицо+шея+декольте)", "price": "2000/3000 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_galvanika", "name": "Гальваника", "price": "1500 руб", "duration": 30, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_kombo_chistka", "name": "КОМБО: Чистка лица + пилинг миндальный + альгинатная маска", "price": "4850 руб", "duration": 90, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_kombo_express", "name": "КОМБО: Экспресс уход + пилинг миндальный + альгинатная маска", "price": "4500 руб", "duration": 75, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_kombo_piling", "name": "КОМБО: Пилинг миндальный + альгинатная маска", "price": "2500 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_kombo_karbo", "name": "КОМБО: Карбокситерапия + альгинатная маска", "price": "2600 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_biorep", "name": "Пилинг BioRePeel CL3", "price": "4000 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_prx", "name": "Пилинг PRX-T34", "price": "4000 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_yellow", "name": "Желтый пилинг Medik Control Peel", "price": "4500 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_laser", "name": "Жидкий лазер. Комплекс пилинга PRX T33 с микронидлингом", "price": "7500 руб", "duration": 90, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_tca", "name": "Пилинг ТСА", "price": "3500 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_pov_sred", "name": "Поверхностно-срединные пилинги", "price": "3500 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_pov", "name": "Поверхностные пилинги", "price": "2600 руб", "duration": 45, "category": "🧴 Косметология", "gender": "female"},
+      { "id": "w_kosm_piling_sred", "name": "Срединные (зимние) пилинги Medik Peel", "price": "4000 руб", "duration": 60, "category": "🧴 Косметология", "gender": "female"},
+    ];
+    const MOCK_TIMES = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00']
+      .map((t,i)=>({ time:t, available: ![2,5,7].includes(i) }));
+    const MOCK_MY = [
+      { id:1042, service_name:'Шугаринг · глубокое бикини', service_price:'1 000 ₽', date:'15.06.2026', time:'14:00' },
+    ];
+    const MOCK_ADMIN = [
+      { id:1042, service_name:'Шугаринг · глубокое бикини', client_name:'Амина', phone:'+8 968 111-22-33', date:'15.06.2026', time:'14:00' },
+      { id:1043, service_name:'Лазерная эпиляция', client_name:'Зарема', phone:'+8 928 444-55-66', date:'16.06.2026', time:'11:00' },
+    ];
+    const MOCK_STATS = {
+      total_bookings:128, total_reviews:54, avg_rating:4.8,
+      service_breakdown:[{service_name:'Шугаринг',count:64,pct:50},{service_name:'Восковая депиляция',count:38,pct:30},{service_name:'Лазер',count:26,pct:20}],
+      top_hours:[{hour:'14:00',count:22},{hour:'11:00',count:18},{hour:'17:00',count:15}],
+      day_breakdown:[{day:'Сб',count:31},{day:'Пт',count:27},{day:'Чт',count:20}],
+    };
+    const MOCK_REVIEWS = [
+      { stars:5, service_name:'Шугаринг · всё тело', client_name:'Амина', date:'10.06.2026' },
+      { stars:5, service_name:'Лазерная эпиляция', client_name:'Зарема', date:'08.06.2026' },
+      { stars:4, service_name:'Маникюр', client_name:'Патимат', date:'05.06.2026' },
+    ];
+
+    // Подмена fetch — отдаём мок-JSON по путям /api/*
+    window.fetch = async (url, opts={}) => {
+      const path = String(url).replace(/^.*\/api/, '');
+      const json = (d)=>({ ok:true, json:async()=>d });
+      await new Promise(r=>setTimeout(r,180)); // имитация задержки
+      if (path === '/services') return json(MOCK_SERVICES);
+      if (path.startsWith('/available-times/')) return json(MOCK_TIMES);
+      if (path === '/bookings' && opts.method === 'POST') return json({ id:9999, status:'confirmed' });
+      if (path === '/my-bookings') return json(MOCK_MY);
+      if (path.startsWith('/my-bookings/')) return json({ ok:true });
+      if (path === '/admin/bookings') return json(MOCK_ADMIN);
+      if (path.startsWith('/admin/bookings/')) return json({ ok:true });
+      if (path === '/admin/stats') return json(MOCK_STATS);
+      if (path === '/admin/reviews') return json(MOCK_REVIEWS);
+      return json({});
+    };
+  </script>
+</head>
+<body>
+
+<!-- ════ SVG-СПРАЙТ ИКОНОК ════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pin"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"/><circle cx="12" cy="11" r="2.3"/></symbol>
+  <symbol id="i-phone"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h3l2 5-2 1.2a12 12 0 0 0 4.8 4.8L14 13l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-chat"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.5L3.5 20.5l1.5-4.9A8.5 8.5 0 1 1 21 11.5z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/></symbol>
+  <symbol id="i-clock"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 1.8"/></symbol>
+  <symbol id="i-check"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17.5 19 7"/></symbol>
+  <symbol id="i-close"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-chev-r"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-arrow-l"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-home"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M5.5 10v10h13V10"/></symbol>
+  <symbol id="i-tag"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V5a2 2 0 0 1 2-2h8l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.6" cy="7.6" r="1.3"/></symbol>
+  <symbol id="i-clipboard"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="2.5"/><path d="M9 5V4a1.2 1.2 0 0 1 1.2-1.2h3.6A1.2 1.2 0 0 1 15 4v1"/><path d="M8.5 11h7M8.5 15h5"/></symbol>
+  <symbol id="i-gear"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M21.5 12h-3M5.5 12h-3M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1M18.7 18.7l-2.1-2.1M7.4 7.4 5.3 5.3"/></symbol>
+  <symbol id="i-spark"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c.5 5 2.5 7 7.5 7.5-5 .5-7 2.5-7.5 7.5-.5-5-2.5-7-7.5-7.5 5-.5 7-2.5 7.5-7.5z"/></symbol>
+  <symbol id="i-user"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 20a7 7 0 0 1 14 0"/></symbol>
+  <symbol id="i-venus"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="5"/><path d="M12 13.5V21M8.5 18h7"/></symbol>
+  <symbol id="i-mars"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="5.2"/><path d="M14.2 9.8 20 4M14.5 4H20v5.5"/></symbol>
+  <symbol id="i-folder"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h6a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-inbox"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l2.5-7.5A2 2 0 0 1 8.4 4h7.2a2 2 0 0 1 1.9 1.5L20 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 13h4l1.5 2.5h5L16 13h4"/></symbol>
+  <symbol id="i-alert"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5M12 16h.01"/></symbol>
+  <symbol id="i-chart"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/></symbol>
+  <symbol id="i-star-line"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></symbol>
+</svg>
+
+<div id="app">
+
+  <section id="page-home" class="page active">
+    <div class="hero">
+      <div class="hero-mark">SAXAР</div>
+      <div class="hero-rule"><span>салон красоты</span></div>
+      <p class="hero-sub">Премиальный уход · Республика Дагестан</p>
+    </div>
+    <div class="info-list">
+      <div class="info-row">
+        <span class="info-icon"><svg><use href="#i-pin"/></svg></span>
+        <div><div class="info-lbl">Адрес</div><div class="info-val">Республика Дагестан, ул. Магомеда Ярагского, 42А</div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon"><svg><use href="#i-phone"/></svg></span>
+        <div><div class="info-lbl">Телефон</div><div class="info-val"><a href="tel:+89681234567">+8 968 123-45-67</a></div></div>
+      </div>
+      <div class="info-row">
+        <span class="info-icon"><svg><use href="#i-chat"/></svg></span>
+        <div><div class="info-lbl">Telegram</div><div class="info-val"><a href="https://t.me/coachgnv">@coachgnv</a></div></div>
+      </div>
+    </div>
+    <button class="btn-primary mt-16" onclick="nav('book')"><svg><use href="#i-calendar"/></svg>Записаться на процедуру</button>
+  </section>
+
+  <section id="page-services" class="page">
+    <div class="page-header"><div class="page-eyebrow">Прайс-лист</div><h2>Услуги и цены</h2></div>
+    <div class="segmented hidden" id="services-gender-seg"></div>
+    <div id="services-list"></div>
+  </section>
+
+  <section id="page-book" class="page">
+    <div id="step-gender" class="step active">
+      <div class="page-header"><div class="page-eyebrow" data-step></div><h2>Выберите раздел</h2><div class="step-progress" data-progress></div></div>
+      <div class="gender-btns" id="book-gender-list"></div>
+    </div>
+    <div id="step-category" class="step">
+      <div class="page-header"><button class="back-btn" onclick="backFromCategory()"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow" data-step></div><h2>Категория</h2><div class="step-progress" data-progress></div></div>
+      <div id="book-category-list"></div>
+    </div>
+    <div id="step-service" class="step">
+      <div class="page-header"><button class="back-btn" onclick="goStep('category')"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow" data-step></div><h2>Услуга</h2><div class="step-progress" data-progress></div></div>
+      <div id="book-service-list"></div>
+    </div>
+    <div id="step-date" class="step">
+      <div class="page-header"><button class="back-btn" onclick="goStep('service')"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow" data-step></div><h2>Выберите дату</h2><div class="step-progress" data-progress></div></div>
+      <div id="dates-list"></div>
+    </div>
+    <div id="step-time" class="step">
+      <div class="page-header"><button class="back-btn" onclick="goStep('date')"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow" data-step></div><h2>Выберите время</h2><div class="step-progress" data-progress></div></div>
+      <div class="legend"><span><i class="lg-dot lg-free"></i> свободно</span><span><i class="lg-dot lg-busy"></i> занято</span></div>
+      <div id="times-grid" class="times-grid"></div>
+    </div>
+    <div id="step-name" class="step">
+      <div class="page-header"><button class="back-btn" onclick="goStep('time')"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow" data-step></div><h2>Ваше имя</h2><div class="step-progress" data-progress></div></div>
+      <div class="field-label">Как к вам обращаться</div>
+      <input id="inp-name" class="form-input" type="text" placeholder="Введите имя">
+      <button class="btn-primary mt-12" onclick="submitName()">Продолжить<svg><use href="#i-chev-r"/></svg></button>
+    </div>
+    <div id="step-phone" class="step">
+      <div class="page-header"><button class="back-btn" onclick="goStep('name')"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow" data-step></div><h2>Номер телефона</h2><div class="step-progress" data-progress></div></div>
+      <div class="field-label">Для подтверждения записи</div>
+      <input id="inp-phone" class="form-input" type="tel" placeholder="+7 (999) 123-45-67">
+      <button class="btn-primary mt-12" onclick="submitPhone()">Проверить запись<svg><use href="#i-chev-r"/></svg></button>
+    </div>
+    <div id="step-confirm" class="step">
+      <div class="page-header"><button class="back-btn" onclick="goStep('phone')"><svg><use href="#i-arrow-l"/></svg>Назад</button><div class="page-eyebrow">Почти готово</div><h2>Подтверждение</h2></div>
+      <div id="confirm-card" class="info-card-big"></div>
+      <button class="btn-primary mt-16" onclick="confirmBooking()"><svg><use href="#i-check"/></svg>Подтвердить запись</button>
+      <button class="btn-secondary mt-8" onclick="nav('home')">Отмена</button>
+    </div>
+    <div id="step-success" class="step">
+      <div class="success-wrap">
+        <div class="success-badge"><svg><use href="#i-check"/></svg></div>
+        <h2 class="success-title">Запись подтверждена</h2>
+        <div id="success-card" class="info-card-big"></div>
+        <button class="btn-primary mt-16" onclick="nav('home')"><svg><use href="#i-home"/></svg>На главную</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="page-mybookings" class="page">
+    <div class="page-header"><div class="page-eyebrow">Личный кабинет</div><h2>Мои записи</h2></div>
+    <div id="my-bookings-list"></div>
+  </section>
+
+  <section id="page-admin" class="page">
+    <div class="page-header"><div class="page-eyebrow">Панель управления</div><h2>Администратор</h2></div>
+    <div class="tab-bar">
+      <button class="tab active" onclick="showTab('bookings')">Записи</button>
+      <button class="tab" onclick="showTab('stats')">Статистика</button>
+      <button class="tab" onclick="showTab('reviews')">Отзывы</button>
+    </div>
+    <div id="tab-bookings" class="tab-panel active"><div id="admin-bookings"></div></div>
+    <div id="tab-stats"    class="tab-panel"><div id="admin-stats"></div></div>
+    <div id="tab-reviews"  class="tab-panel"><div id="admin-reviews"></div></div>
+  </section>
+
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active"           data-page="home"       onclick="nav('home')"><span class="ni"><svg><use href="#i-home"/></svg></span><span class="nl">Главная</span></button>
+  <button class="nav-btn"                  data-page="services"   onclick="nav('services')"><span class="ni"><svg><use href="#i-tag"/></svg></span><span class="nl">Услуги</span></button>
+  <button class="nav-btn nav-cta"          data-page="book"       onclick="nav('book')"><span class="ni"><svg><use href="#i-spark"/></svg></span><span class="nl">Записаться</span></button>
+  <button class="nav-btn"                  data-page="mybookings" onclick="nav('mybookings')"><span class="ni"><svg><use href="#i-clipboard"/></svg></span><span class="nl">Мои записи</span></button>
+  <button class="nav-btn nav-admin hidden" data-page="admin"      onclick="nav('admin')"><span class="ni"><svg><use href="#i-gear"/></svg></span><span class="nl">Админ</span></button>
+</nav>
+
+<div id="loader" class="loader hidden"><div class="spinner"></div></div>
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js?v=20260613"></script>
+</body>
+</html>
