@@ -809,28 +809,23 @@ body::before {
   font-family: var(--font);
   transition: color .2s;
 }
-.nav-btn .ni { display: flex; }
+/* фиксированная высота зоны иконки — все кнопки на одном уровне */
+.nav-btn .ni { display: flex; align-items: center; justify-content: center; height: 36px; }
 .nav-btn .ni svg { width: 23px; height: 23px; }
 .nav-btn .nl { font-size: 9.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
 .nav-btn.active { color: var(--brand); }
 
-/* центральная кнопка-CTA «Записаться» — светящийся круг */
+/* центральная кнопка-CTA «Записаться» — в ряд с остальными, иконка в градиентной плашке */
 .nav-cta { color: var(--brand) !important; }
 .nav-cta .ni {
-  width: 56px; height: 56px;
-  margin-top: -24px;
-  border-radius: 18px;             /* скруглённый квадрат логотипа */
+  width: 36px; height: 36px;
+  border-radius: 11px;             /* скруглённый квадрат логотипа */
   background: var(--grad);
   background-size: 180% 180%;
-  animation: gradShift 5s ease-in-out infinite alternate, ctaGlow 2.6s ease-in-out infinite;
+  animation: gradShift 5s ease-in-out infinite alternate;
   color: #fff;
-  align-items: center; justify-content: center;
-  border: 4px solid var(--bg);
+  box-shadow: 0 4px 12px rgba(221,21,128,.35);
+  transition: transform .16s;
 }
-@keyframes ctaGlow {
-  0%, 100% { box-shadow: 0 10px 26px rgba(221,21,128,.35); }
-  50%      { box-shadow: 0 12px 34px rgba(221,21,128,.55); }
-}
-.nav-cta .ni svg { width: 26px; height: 26px; }
+.nav-cta .ni svg { width: 20px; height: 20px; }
 .nav-cta:active .ni { transform: scale(.93); }
-.nav-cta .nl { margin-top: 1px; }
